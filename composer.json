@@ -1,0 +1,37 @@
+{
+  "name": "ox/router",
+  "license": "OxGroup",
+  "description": "Ox Router",
+  "keywords": [
+    "router"
+  ],
+  "authors": [
+    {
+      "name": "Aliaxander Tsihankou",
+      "email": "dev@oxgroup.media",
+      "homepage": "http://oxgroup.media/"
+    }
+  ],
+  "require": {
+    "php": ">=5.3.0",
+    "symfony/http-kernel": "3.0.*"
+  },
+  "autoload-dev": {
+    "psr-0": {
+      "Ox": "src/",
+      "Ox\\": "src/"
+    },
+    "classmap": [
+      "src/"
+    ]
+  },
+  "autoload": {
+    "psr-0": {
+      "Ox": "src/",
+      "Ox\\": "src/"
+    },
+    "classmap": [
+      "src/"
+    ]
+  }
+}
