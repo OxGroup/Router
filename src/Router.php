@@ -8,7 +8,7 @@
 
 namespace Ox\Router;
 
-class NewRoute
+class Router
 {
     /**
      * @param $rout
