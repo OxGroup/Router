@@ -8,7 +8,7 @@
 
 namespace Ox\Router;
 
-class NewRoute
+class Router
 {
     /**
      * @param $rout
@@ -18,5 +18,10 @@ class NewRoute
     public function rout($rout)
     {
         return new AppRoute($rout);
+    }
+
+    public function addGroupMiddleware($name, array $groups)
+    {
+        RouteMiddleware::$middleware[$name] = $groups;
     }
 }

@@ -12,15 +12,16 @@ class RouteMiddleware
 {
     protected $middlewareNext = true;
     private $route, $class, $method;
+    public static $middleware = array();
 
     /**
      * RouteMiddleware constructor.
      *
-     * @param        $route
-     * @param        $class
-     * @param string $method
+     * @param bool $route
+     * @param bool $class
+     * @param bool $method
      */
-    public function __construct($route, $class, $method = "")
+    public function __construct($route = false, $class = false, $method = false)
     {
         $this->route = $route;
         $this->class = $class;
@@ -103,6 +104,22 @@ class RouteMiddleware
         }
         return $this;
     }
+
+    /**
+     * @param $name
+     *
+     * @return $this
+     */
+    public function setMiddlewareGroup($name)
+    {
+        if (!empty(self::$middleware[$name])) {
+            foreach (self::$middleware[$name] as $name => $rule) {
+                $this->middleware($name, $rule);
+            }
+        }
+        return $this;
+    }
+
 
     /**
      * @return $this
