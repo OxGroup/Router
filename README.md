@@ -15,11 +15,18 @@
         
 
 Controller:
+
 DIR: http/controllers
+
 Namespace: \OxApp\Controllers
+
 NameController extends \Ox\App
 
+
 Middleware:
+
 DIR: http/middleware
+
 Namespace - \OxApp\middleware
+
 public function rules($rule=array())
