@@ -20,6 +20,10 @@ class Router
         return new AppRoute($rout);
     }
 
+    /**
+     * @param       $name
+     * @param array $groups
+     */
     public function addGroupMiddleware($name, array $groups)
     {
         RouteMiddleware::$middleware[$name] = $groups;
