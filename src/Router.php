@@ -5,9 +5,7 @@
  * Date: 05.12.2015
  * Time: 19:56
  */
-
 namespace Ox\Router;
-
 class Router
 {
     /**
@@ -29,18 +27,16 @@ class Router
         RouteMiddleware::$middleware[$name] = $groups;
     }
 
-
     public static function group($name, \Closure $function)
     {
-
         $middlewareGroup = new RouteMiddleware();
+        $middlewareGroup->class = true;
         $result = $middlewareGroup->setMiddlewareGroup($name);
-        var_dump($result->middlewareNext);
         if ($result->middlewareNext == true) {
+            $middlewareGroup->class = false;
             $data = $function(); // отложенное выполнение кода
             return $data;
         }
         return false;
     }
-
 }

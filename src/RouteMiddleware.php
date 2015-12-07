@@ -5,13 +5,12 @@
  * Date: 05.12.2015
  * Time: 21:05
  */
-
 namespace Ox\Router;
-
 class RouteMiddleware
 {
     public $middlewareNext = true;
-    private $route, $class, $method;
+    public $class;
+    private $route, $method;
     public static $middleware = array();
 
     /**
@@ -35,7 +34,6 @@ class RouteMiddleware
      */
     private function fileController($route, $class, $method = "")
     {
-
         $file = "../apps/controllers/" . $class . "Controller.php";
         $file = str_replace("\\", "/", $file);
         if (is_readable($file) == false) {
@@ -44,20 +42,16 @@ class RouteMiddleware
             $class .= "Controller";
             try {
                 $class = "\\OxApp\\controllers\\" . $class;
-
                 $controller = new  $class();
                 if (is_subclass_of($controller, 'Ox\App')) {
                     if (!empty($this->ContentType))
                         header('Content-Type: ' . $this->ContentType);
-
-
                     if (!empty($method)) {
                         try {
                             $controller->$method();
                         } catch (\Exception $e) {
                             echo "ERROR: $e";
                         }
-
                     } else {
                         if (!empty($_POST)) {
                             try {
@@ -65,7 +59,6 @@ class RouteMiddleware
                             } catch (\Exception $e) {
                                 echo "ERROR: $e";
                             }
-
                         } else {
                             try {
                                 $controller->view();
@@ -83,7 +76,6 @@ class RouteMiddleware
             }
         }
     }
-
 
     /**
      * @param       $middlewareName
@@ -114,14 +106,11 @@ class RouteMiddleware
     {
         if (!empty(self::$middleware[$name])) {
             foreach (self::$middleware[$name] as $name => $rule) {
-                echo $name;
-                print_r($rule);
                 $this->middleware($name, $rule);
             }
         }
         return $this;
     }
-
 
     /**
      * @return $this
@@ -133,5 +122,4 @@ class RouteMiddleware
         }
         return $this;
     }
-
 }
