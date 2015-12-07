@@ -38,7 +38,9 @@ class RouteMiddleware
 
         $file = "../http/controllers/" . $class . "Controller.php";
         $file = str_replace("\\", "/", $file);
-        if (is_readable($file) == false) {
+        $file2 = "../apps/controllers/" . $class . "Controller.php";
+        $file2 = str_replace("\\", "/", $file2);
+        if (is_readable($file) == false and is_readable($file2) == false) {
             die ($file . ' Controller Not Found');
         } else {
             $class .= "Controller";
