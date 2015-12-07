@@ -5,7 +5,6 @@
  * Date: 05.12.2015
  * Time: 20:52
  */
-
 namespace Ox\Router;
 
 use Symfony\Component\HttpFoundation\Request;
@@ -58,7 +57,6 @@ class AppRoute
             if (!isset($_GET['q'])) {
                 $_GET['q'] = "/";
             }
-
             if (!empty($_SERVER['REQUEST_URI'])) {
                 $GET = $_SERVER['REQUEST_URI'];
             } else if (!empty($_SERVER['REDIRECT_URL'])) {
@@ -66,12 +64,10 @@ class AppRoute
             } else {
                 $GET = $_GET['q'];
             }
-
             $check = explode("?", $GET);
             if (isset($check[1])) {
                 $GET = $check[0];
             }
-
             if (substr($GET, -1) !== "/") {
                 $GET .= "/";
             }
@@ -84,7 +80,6 @@ class AppRoute
             if ($route{0} !== "/") {
                 $route = "/" . $route;
             }
-
             $SetGet = array();
             $setGetRoutes = explode("/", $route);
             if (0 === count($setGetRoutes)) {
@@ -108,20 +103,16 @@ class AppRoute
                     $_GET = $SetGet + $_GET;
                     $_REQUEST = $SetGet + $_REQUEST;
                 }
-
                 $resultRoute = explode("::", $class);
                 if (!empty($resultRoute[1])) {
                     $method = $resultRoute[1];
                 }
-
             } else {
                 $class = false;
             }
         } else {
             $class = false;
         }
-
         return new RouteMiddleware($route, $class, $method);
     }
-
 }
