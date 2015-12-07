@@ -10,7 +10,7 @@ namespace Ox\Router;
 
 class RouteMiddleware
 {
-    protected $middlewareNext = true;
+    public $middlewareNext = true;
     private $route, $class, $method;
     public static $middleware = array();
 
@@ -36,11 +36,9 @@ class RouteMiddleware
     private function fileController($route, $class, $method = "")
     {
 
-        $file = "../http/controllers/" . $class . "Controller.php";
+        $file = "../apps/controllers/" . $class . "Controller.php";
         $file = str_replace("\\", "/", $file);
-        $file2 = "../apps/controllers/" . $class . "Controller.php";
-        $file2 = str_replace("\\", "/", $file2);
-        if (is_readable($file) == false and is_readable($file2) == false) {
+        if (is_readable($file) == false) {
             die ($file . ' Controller Not Found');
         } else {
             $class .= "Controller";
@@ -116,6 +114,8 @@ class RouteMiddleware
     {
         if (!empty(self::$middleware[$name])) {
             foreach (self::$middleware[$name] as $name => $rule) {
+                echo $name;
+                print_r($rule);
                 $this->middleware($name, $rule);
             }
         }

@@ -15,7 +15,7 @@ class Router
      *
      * @return AppRoute
      */
-    public function rout($rout)
+    public static function rout($rout)
     {
         return new AppRoute($rout);
     }
@@ -28,4 +28,19 @@ class Router
     {
         RouteMiddleware::$middleware[$name] = $groups;
     }
+
+
+    public static function group($name, \Closure $function)
+    {
+
+        $middlewareGroup = new RouteMiddleware();
+        $result = $middlewareGroup->setMiddlewareGroup($name);
+        var_dump($result->middlewareNext);
+        if ($result->middlewareNext == true) {
+            $data = $function(); // отложенное выполнение кода
+            return $data;
+        }
+        return false;
+    }
+
 }
