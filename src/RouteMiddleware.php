@@ -10,8 +10,10 @@ class RouteMiddleware
 {
     public $middlewareNext = true;
     public $class;
+    public static $nameGroup;
     private $route, $method;
     public static $middleware = array();
+    public static $middlewareFilters = array();
 
     /**
      * RouteMiddleware constructor.
@@ -113,11 +115,30 @@ class RouteMiddleware
     }
 
     /**
+     * @param $name
+     *
+     * @return $this
+     */
+    public function afterSetMiddlewareGroup($name)
+    {
+        if (!empty(self::$middlewareFilters[$name])) {
+            foreach (self::$middlewareFilters[$name] as $name => $rule) {
+                $this->middleware($name, $rule);
+            }
+        }
+        return $this;
+    }
+
+    /**
      * @return $this
      */
     public function go()
     {
         if ($this->middlewareNext == true and $this->class !== false) {
+
+            if (!empty(self::$nameGroup)) {
+                $this->afterSetMiddlewareGroup(self::$nameGroup);
+            }
             $this->fileController($this->route, $this->class, $this->method);
         }
         return $this;

@@ -8,6 +8,8 @@
 namespace Ox\Router;
 class Router
 {
+    private static $middlewareFilters = array();
+
     /**
      * @param $rout
      *
@@ -21,18 +23,35 @@ class Router
     /**
      * @param       $name
      * @param array $groups
+     *
+     * @return $this
      */
-    public function addGroupMiddleware($name, array $groups)
+    public static function addMiddlewareGroup($name, array $groups, array $filtersMiddleware = array())
     {
+        if (!empty($filtersMiddleware)) {
+            self::$middlewareFilters[$name] = $filtersMiddleware;
+        }
         RouteMiddleware::$middleware[$name] = $groups;
     }
 
-    public static function group($name, \Closure $function)
+
+    /**
+     * @param          $name
+     * @param \Closure $function
+     *
+     * @return bool
+     */
+    public static function setMiddlewareGroup($name, \Closure $function)
     {
+        RouteMiddleware::$nameGroup = "";
         $middlewareGroup = new RouteMiddleware();
         $middlewareGroup->class = true;
         $result = $middlewareGroup->setMiddlewareGroup($name);
         if ($result->middlewareNext == true) {
+            if (!empty(self::$middlewareFilters)) {
+                RouteMiddleware::$nameGroup = $name;
+                RouteMiddleware::$middlewareFilters = self::$middlewareFilters;
+            }
             $middlewareGroup->class = false;
             $data = $function(); // отложенное выполнение кода
             return $data;
