@@ -9,7 +9,9 @@ namespace Ox\Router;
 class Router
 {
     private static $middlewareFilters = array();
-
+    public static $route;
+    public static $controller;
+    public static $statusCode;
     /**
      * @param $rout
      *
