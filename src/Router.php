@@ -8,6 +8,10 @@
 namespace Ox\Router;
 class Router
 {
+    public static $route;
+    public static $controller;
+    public static $statusCode;
+
     /**
      * @param $rout
      *
