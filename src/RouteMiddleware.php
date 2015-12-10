@@ -39,11 +39,14 @@ class RouteMiddleware
         $file = "../apps/controllers/" . $class . "Controller.php";
         $file = str_replace("\\", "/", $file);
         if (is_readable($file) == false) {
+             Router::$statusCode="404";
             die ($file . ' Controller Not Found');
         } else {
             $class .= "Controller";
             try {
                 $class = "\\OxApp\\controllers\\" . $class;
+                Router::$route = $route;
+                Router::$controller = $class;
                 $controller = new  $class();
                 if (is_subclass_of($controller, 'Ox\App')) {
                     if (!empty($this->ContentType))
@@ -71,6 +74,7 @@ class RouteMiddleware
                     }
                     die();
                 } else {
+                    Router::$statusCode = "418";
                     die ('No extends App');
                 }
             } catch (\Exception $e) {
