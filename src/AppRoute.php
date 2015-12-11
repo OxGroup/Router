@@ -99,7 +99,7 @@ class AppRoute
             $routePreg = str_replace($before, $after, $route);
             $routePreg = "/^" . $routePreg . "$/i";
             if ((preg_match($routePreg, $GET) and $route != $GET) or $route == $GET) {
-                if (0 === count($SetGet)) {
+                if (0 !== count($SetGet)) {
                     $_GET = $SetGet + $_GET;
                     $_REQUEST = $SetGet + $_REQUEST;
                 }
