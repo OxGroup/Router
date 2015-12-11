@@ -82,7 +82,7 @@ class AppRoute
             }
             $SetGet = array();
             $setGetRoutes = explode("/", $route);
-            if (0 === count($setGetRoutes)) {
+            if (0 !== count($setGetRoutes)) {
                 $getResut = explode("/", $GET);
                 $i = 0;
                 foreach ($setGetRoutes as $rout) {
