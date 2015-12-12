@@ -37,7 +37,7 @@ class RouteMiddleware
      *
      * @return $this
      */
-    private function middleware($middlewareName, $rules = array())
+    public function middleware($middlewareName, $rules = array())
     {
         if ($this->middlewareNext == true and $this->class !== false) {
             try {
@@ -88,12 +88,12 @@ class RouteMiddleware
     {
         if ($this->middlewareNext == true and $this->class !== false) {
 
-            GoRoute::fileController($this->route, $this->class, $this->method);
             if (!empty(self::$nameGroup)) {
                 $this->afterSetMiddlewareGroup(self::$nameGroup);
             }
-
+            $goRoute=new GoRoute();
+            $goRoute->fileController($this->route, $this->class, $this->method);
         }
-        return $this;
+        return true;
     }
 }

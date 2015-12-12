@@ -3,7 +3,7 @@
  * Created by PhpStorm.
  * User: Aliaxander
  * Date: 12.12.15
- * Time: 15:59
+ * Time: 16:25
  */
 
 namespace Ox\Router;
@@ -16,7 +16,7 @@ class GoRoute
      * @param        $class
      * @param string $method
      */
-    public static function fileController($route, $class, $method = "")
+    public function fileController($route, $class, $method = "")
     {
         $file = "../apps/controllers/" . $class . "Controller.php";
         $file = str_replace("\\", "/", $file);
