@@ -91,7 +91,7 @@ class RouteMiddleware
      *
      * @return $this
      */
-    public function middleware($middlewareName, $rules = array())
+    private function middleware($middlewareName, $rules = array())
     {
         if ($this->middlewareNext == true and $this->class !== false) {
             try {
