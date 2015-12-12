@@ -47,6 +47,8 @@ class RouteMiddleware
                 $class = "\\OxApp\\controllers\\" . $class;
                 Router::$route = $route;
                 Router::$controller = $class;
+                Router::$routeCounts+=1;
+                
                 $controller = new  $class();
                 if (is_subclass_of($controller, 'Ox\App')) {
                     if (!empty($this->ContentType))
