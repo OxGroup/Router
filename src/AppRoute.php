@@ -38,7 +38,7 @@ class AppRoute
     /**
      * @param $app
      *
-     * @return bool
+     * @return RouteMiddleware
      */
     public function app($app)
     {
@@ -113,8 +113,7 @@ class AppRoute
         } else {
             $class = false;
         }
-        $go = new RouteMiddleware($route, $class, $method);
-        $go->go();
-        return true;
+
+        return new RouteMiddleware($route, $class, $method);
     }
 }

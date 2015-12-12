@@ -29,61 +29,7 @@ class RouteMiddleware
         $this->method = $method;
     }
 
-    /**
-     * @param        $route
-     * @param        $class
-     * @param string $method
-     */
-    private function fileController($route, $class, $method = "")
-    {
-        $file = "../apps/controllers/" . $class . "Controller.php";
-        $file = str_replace("\\", "/", $file);
-        if (is_readable($file) == false) {
-             Router::$statusCode="404";
-            die ($file . ' Controller Not Found');
-        } else {
-            $class .= "Controller";
-            try {
-                $class = "\\OxApp\\controllers\\" . $class;
-                Router::$route = $route;
-                Router::$controller = $class;
-                Router::$routeCounts+=1;
-                
-                $controller = new  $class();
-                if (is_subclass_of($controller, 'Ox\App')) {
-                    if (!empty($this->ContentType))
-                        header('Content-Type: ' . $this->ContentType);
-                    if (!empty($method)) {
-                        try {
-                            $controller->$method();
-                        } catch (\Exception $e) {
-                            echo "ERROR: $e";
-                        }
-                    } else {
-                        if (!empty($_POST)) {
-                            try {
-                                $controller->post();
-                            } catch (\Exception $e) {
-                                echo "ERROR: $e";
-                            }
-                        } else {
-                            try {
-                                $controller->view();
-                            } catch (\Exception $e) {
-                                echo "ERROR: $e";
-                            }
-                        }
-                    }
-                    die();
-                } else {
-                    Router::$statusCode = "418";
-                    die ('No extends App');
-                }
-            } catch (\Exception $e) {
-                echo "ERROR: $e";
-            }
-        }
-    }
+
 
     /**
      * @param       $middlewareName
@@ -142,10 +88,11 @@ class RouteMiddleware
     {
         if ($this->middlewareNext == true and $this->class !== false) {
 
+            GoRoute::fileController($this->route, $this->class, $this->method);
             if (!empty(self::$nameGroup)) {
                 $this->afterSetMiddlewareGroup(self::$nameGroup);
             }
-            $this->fileController($this->route, $this->class, $this->method);
+
         }
         return $this;
     }
