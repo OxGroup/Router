@@ -12,6 +12,7 @@ class Router
     public static $route;
     public static $controller;
     public static $statusCode;
+    public static $routeCounts=0;
     /**
      * @param $rout
      *
