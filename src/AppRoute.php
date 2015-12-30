@@ -106,6 +106,7 @@ class AppRoute
                 $resultRoute = explode("::", $class);
                 if (!empty($resultRoute[1])) {
                     $method = $resultRoute[1];
+                    $class = $resultRoute[0];
                 }
             } else {
                 $class = false;
