@@ -6,8 +6,15 @@
  * Time: 21:05
  */
 namespace Ox\Router;
+
+use Whoops\Handler\JsonResponseHandler;
+use Whoops\Handler\PrettyPageHandler;
+use Whoops\Run;
+
 class RouteMiddleware
 {
+
+    public static $handlerFormat = "pretty";
     public $middlewareNext = true;
     public $class;
     public static $nameGroup;
@@ -28,7 +35,6 @@ class RouteMiddleware
         $this->class = $class;
         $this->method = $method;
     }
-
 
 
     /**
@@ -91,7 +97,29 @@ class RouteMiddleware
             if (!empty(self::$nameGroup)) {
                 $this->afterSetMiddlewareGroup(self::$nameGroup);
             }
-            $goRoute=new GoRoute();
+
+            $whoops = new Run();
+            if (self::$handlerFormat === "json") {
+                $whoops->pushHandler(new JsonResponseHandler());
+                header('Content-Type: application/json');
+
+                self::$handlerFormat = "pretty";
+            } else {
+                $whoops->pushHandler(new PrettyPageHandler());
+            }
+
+            $whoops->pushHandler(function ($exception, $inspector, $run) {
+                $inspector->getFrames()->map(function ($frame) {
+                    if ($function = $frame->getFunction()) {
+                        $frame->addComment("This frame is within function '$function'", 'cpt-obvious');
+                    }
+                    return $frame;
+                });
+            });
+
+            $whoops->register();
+
+            $goRoute = new GoRoute();
             $goRoute->fileController($this->route, $this->class, $this->method);
         }
         return true;
