@@ -7,6 +7,8 @@
  */
 namespace Ox\Router;
 
+use Monolog\Handler\StreamHandler;
+use Monolog\Logger;
 use Whoops\Handler\JsonResponseHandler;
 use Whoops\Handler\PrettyPageHandler;
 use Whoops\Run;
@@ -14,6 +16,8 @@ use Whoops\Run;
 class RouteMiddleware
 {
 
+
+    public static $debug = true;
     public static $handlerFormat = "pretty";
     public $middlewareNext = true;
     public $class;
@@ -98,25 +102,49 @@ class RouteMiddleware
                 $this->afterSetMiddlewareGroup(self::$nameGroup);
             }
 
-            $whoops = new Run();
-            if (self::$handlerFormat === "json") {
-                $whoops->pushHandler(new JsonResponseHandler());
-                header('Content-Type: application/json');
 
-                self::$handlerFormat = "pretty";
-            } else {
-                $whoops->pushHandler(new PrettyPageHandler());
-            }
+            $whoops = new Run;
+            $whoops->pushHandler(
+                function ($exception, $inspector, $whoops) {
 
-            $whoops->pushHandler(function ($exception, $inspector, $run) {
-                $inspector->getFrames()->map(function ($frame) {
-                    if ($function = $frame->getFunction()) {
-                        $frame->addComment("This frame is within function '$function'", 'cpt-obvious');
+                    // Remove any previous output
+                    ob_get_level() and ob_end_clean();
+
+                    // Set response code
+                    http_response_code(500);
+
+
+                    $logger = new Logger('errors');
+                    $logger->pushHandler(new StreamHandler(__DIR__ . '/../../../../errors.log'));
+                    $logger->critical(
+                        $exception->getMessage(),
+                        array(
+                            'File' => $exception->getFile(),
+                            'Line' => $exception->getLine()
+                        )
+                    );
+
+
+                    // Display errors
+                    if (self::$debug == true) {
+                        assert_options(ASSERT_ACTIVE, true);
+                        if (self::$handlerFormat === "json") {
+                            $whoops->pushHandler(new JsonResponseHandler());
+                            header('Content-Type: application/json');
+
+                            self::$handlerFormat = "pretty";
+                        } else {
+                            $whoops->pushHandler(new PrettyPageHandler());
+                        }
+                        $whoops->handleException($exception);
+                    } else {
+                        Router::$statusCode = 505;
+                        header("Location: /505");
                     }
-                    return $frame;
-                });
-            });
 
+                    exit;
+                }
+            );
             $whoops->register();
 
             $goRoute = new GoRoute();
