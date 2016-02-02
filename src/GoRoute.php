@@ -38,6 +38,7 @@ class GoRoute
                             $controller->$method();
                         } catch (\Exception $e) {
                             echo "ERROR: $e";
+                            Router::$statusCode = "418";
                         }
                     } else {
                         if (!empty($_POST)) {
@@ -45,22 +46,25 @@ class GoRoute
                                 $controller->post();
                             } catch (\Exception $e) {
                                 echo "ERROR: $e";
+                                Router::$statusCode = "418";
                             }
                         } else {
                             try {
                                 $controller->view();
                             } catch (\Exception $e) {
                                 echo "ERROR: $e";
+                                Router::$statusCode = "418";
                             }
                         }
                     }
-                    die();
+                    //die();
                 } else {
                     Router::$statusCode = "418";
-                    die ('No extends App');
+                    //echo ('No extends App');
                 }
             } catch (\Exception $e) {
                 echo "ERROR: $e";
+                Router::$statusCode = "418";
             }
         }
     }
