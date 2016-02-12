@@ -20,5 +20,4 @@ class RouteRules
         $this->appController = $appController;
         return $this;
     }
-
 }

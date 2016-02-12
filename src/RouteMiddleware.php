@@ -97,7 +97,6 @@ class RouteMiddleware
     public function go()
     {
         if ($this->middlewareNext == true and $this->class !== false) {
-
             if (!empty(self::$nameGroup)) {
                 $this->afterSetMiddlewareGroup(self::$nameGroup);
             }

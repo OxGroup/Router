@@ -54,7 +54,6 @@ class AppRoute
             $_SERVER
         );
         if ($this->method === "ALL" or $this->method === $request->server->get("REQUEST_METHOD")) {
-
             $this->method = $request->server->get("REQUEST_METHOD");
 
             if (!$request->query->get("q")) {
@@ -64,7 +63,7 @@ class AppRoute
 
             if ($request->server->get("REQUEST_URI")) {
                 $GET = $request->server->get("REQUEST_URI");
-            } else if ($request->server->get("REDIRECT_URL")) {
+            } elseif ($request->server->get("REDIRECT_URL")) {
                 $GET = $request->server->get("REDIRECT_URL");
             } else {
                 $GET = $request->query->get("q");

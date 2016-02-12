@@ -6,6 +6,7 @@
  * Time: 19:56
  */
 namespace Ox\Router;
+
 class Router
 {
     private static $middlewareFilters = array();

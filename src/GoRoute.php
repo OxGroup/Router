@@ -8,7 +8,6 @@
 
 namespace Ox\Router;
 
-
 class GoRoute
 {
     /**
