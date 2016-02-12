@@ -43,7 +43,7 @@ class AppRoute
     public function app($app)
     {
         $method = false;
-        $class = $app;
+        $class = Router::$defaultNameSpace . $app;
         $route = $this->route;
         $request = new Request(
             $_GET,
@@ -54,6 +54,8 @@ class AppRoute
             $_SERVER
         );
         if ($this->method === "ALL" or $this->method === $request->server->get("REQUEST_METHOD")) {
+            $this->method = $request->server->get("REQUEST_METHOD");
+
             if (!$request->query->get("q")) {
                 //$_GET['q'] = "/";
                 $request->query->set("q", "/");
@@ -61,7 +63,7 @@ class AppRoute
 
             if ($request->server->get("REQUEST_URI")) {
                 $GET = $request->server->get("REQUEST_URI");
-            } else if ($request->server->get("REDIRECT_URL")) {
+            } elseif ($request->server->get("REDIRECT_URL")) {
                 $GET = $request->server->get("REDIRECT_URL");
             } else {
                 $GET = $request->query->get("q");

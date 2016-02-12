@@ -6,6 +6,7 @@
  * Time: 19:56
  */
 namespace Ox\Router;
+
 class Router
 {
     private static $middlewareFilters = array();
@@ -14,6 +15,9 @@ class Router
     public static $statusCode;
     public static $routeCounts = 0;
     public static $doubleRoute = false;
+    public static $defaultRout = "";
+    public static $defaultNameSpace = "";
+
 
     /**
      * @param $rout
@@ -22,7 +26,7 @@ class Router
      */
     public static function rout($rout)
     {
-        return new AppRoute($rout);
+        return new AppRoute(self::$defaultRout . $rout);
     }
 
     /**
@@ -31,11 +35,24 @@ class Router
      *
      * @return $this
      */
-    public static function addMiddlewareGroup($name, array $groups, array $filtersMiddleware = array())
+    public static function addMiddlewareGroup($name, array $groups, array $filtersMiddleware = array(), $defaultRout = "", $defaultNameSpace = "")
     {
         if (!empty($filtersMiddleware)) {
             self::$middlewareFilters[$name] = $filtersMiddleware;
         }
+
+        if (!empty($defaultRout)) {
+            self::$defaultRout = $defaultRout;
+        } else {
+            self::$defaultRout = "";
+        }
+
+        if (!empty($defaultNameSpace)) {
+            self::$defaultNameSpace = $defaultNameSpace;
+        } else {
+            self::$defaultNameSpace = "";
+        }
+
         RouteMiddleware::$middleware[$name] = $groups;
     }
 

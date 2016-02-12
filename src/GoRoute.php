@@ -8,7 +8,6 @@
 
 namespace Ox\Router;
 
-
 class GoRoute
 {
     /**
@@ -22,7 +21,7 @@ class GoRoute
         $file = str_replace("\\", "/", $file);
         if (is_readable($file) == false) {
             Router::$statusCode = "404";
-            echo ($file . ' Controller Not Found');
+            echo($file . ' Controller Not Found');
         } else {
             $class .= "Controller";
             try {
