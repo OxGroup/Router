@@ -54,6 +54,9 @@ class AppRoute
             $_SERVER
         );
         if ($this->method === "ALL" or $this->method === $request->server->get("REQUEST_METHOD")) {
+
+            $this->method = $request->server->get("REQUEST_METHOD");
+
             if (!$request->query->get("q")) {
                 //$_GET['q'] = "/";
                 $request->query->set("q", "/");
