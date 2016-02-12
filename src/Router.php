@@ -15,6 +15,8 @@ class Router
     public static $routeCounts = 0;
     public static $doubleRoute = false;
     public static $defaultRout = "";
+    public static $defaultNameSpace = "";
+
 
     /**
      * @param $rout
@@ -32,7 +34,7 @@ class Router
      *
      * @return $this
      */
-    public static function addMiddlewareGroup($name, array $groups, array $filtersMiddleware = array(), $defaultRout = "")
+    public static function addMiddlewareGroup($name, array $groups, array $filtersMiddleware = array(), $defaultRout = "", $defaultNameSpace = "")
     {
         if (!empty($filtersMiddleware)) {
             self::$middlewareFilters[$name] = $filtersMiddleware;
@@ -43,6 +45,13 @@ class Router
         } else {
             self::$defaultRout = "";
         }
+
+        if (!empty($defaultNameSpace)) {
+            self::$defaultNameSpace = $defaultNameSpace;
+        } else {
+            self::$defaultNameSpace = "";
+        }
+
         RouteMiddleware::$middleware[$name] = $groups;
     }
 

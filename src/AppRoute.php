@@ -43,7 +43,7 @@ class AppRoute
     public function app($app)
     {
         $method = false;
-        $class = $app;
+        $class = Router::$defaultNameSpace . $app;
         $route = $this->route;
         $request = new Request(
             $_GET,
