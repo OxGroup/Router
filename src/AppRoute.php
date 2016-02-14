@@ -48,8 +48,6 @@ class AppRoute
         $request = new Request(
             $_GET,
             $_POST,
-            $_COOKIE,
-            $_SESSION,
             $_FILES,
             $_SERVER
         );
