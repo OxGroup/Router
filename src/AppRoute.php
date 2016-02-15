@@ -48,7 +48,6 @@ class AppRoute
         $request = new Request(
             $_GET,
             $_POST,
-            $_FILES,
             $_SERVER
         );
         if ($this->method === "ALL" or $this->method === $request->server->get("REQUEST_METHOD")) {
