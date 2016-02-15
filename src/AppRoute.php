@@ -43,7 +43,7 @@ class AppRoute
     public function app($app)
     {
         $method = false;
-        $class = $app;
+        $class = Router::$defaultNameSpace . $app;
         $route = $this->route;
         $request = new Request(
             $_GET,
@@ -54,15 +54,19 @@ class AppRoute
             $_SERVER
         );
         if ($this->method === "ALL" or $this->method === $request->server->get("REQUEST_METHOD")) {
-            if (!isset($_GET['q'])) {
-                $_GET['q'] = "/";
+            $this->method = $request->server->get("REQUEST_METHOD");
+
+            if (!$request->query->get("q")) {
+                //$_GET['q'] = "/";
+                $request->query->set("q", "/");
             }
-            if (!empty($_SERVER['REQUEST_URI'])) {
-                $GET = $_SERVER['REQUEST_URI'];
-            } else if (!empty($_SERVER['REDIRECT_URL'])) {
-                $GET = $_SERVER['REDIRECT_URL'];
+
+            if ($request->server->get("REQUEST_URI")) {
+                $GET = $request->server->get("REQUEST_URI");
+            } else if ($request->server->get("REDIRECT_URL")) {
+                $GET = $request->server->get("REDIRECT_URL");
             } else {
-                $GET = $_GET['q'];
+                $GET = $request->query->get("q");
             }
             $check = explode("?", $GET);
             if (isset($check[1])) {
@@ -95,17 +99,28 @@ class AppRoute
                 }
             }
             $before = array(":num", ":char", ":charNum", ":text", ":img", "/",);
-            $after = array("[0-9]*", "[A-Za-z]*", "[A-Za-z0-9-]*", "[A-Za-z0-9- .,:%+;]*", ".*[.](png|jpg|jpeg|gif)", '\/',);
+            $after = array(
+                "[0-9]*",
+                "[A-Za-z]*",
+                "[A-Za-z0-9-]*",
+                "[A-Za-z0-9- .,:%+;]*",
+                ".*[.](png|jpg|jpeg|gif)",
+                '\/',
+                );
             $routePreg = str_replace($before, $after, $route);
             $routePreg = "/^" . $routePreg . "$/i";
             if ((preg_match($routePreg, $GET) and $route != $GET) or $route == $GET) {
                 if (0 !== count($SetGet)) {
+                    foreach ($SetGet as $keyGet => $valGet) {
+                        $request->query->set($keyGet, $valGet);
+                    }
                     $_GET = $SetGet + $_GET;
                     $_REQUEST = $SetGet + $_REQUEST;
                 }
                 $resultRoute = explode("::", $class);
                 if (!empty($resultRoute[1])) {
                     $method = $resultRoute[1];
+                    $class = $resultRoute[0];
                 }
             } else {
                 $class = false;
