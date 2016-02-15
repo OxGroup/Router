@@ -48,8 +48,6 @@ class AppRoute
         $request = new Request(
             $_GET,
             $_POST,
-            $_COOKIE,
-            $_SESSION,
             $_FILES,
             $_SERVER
         );
@@ -63,7 +61,7 @@ class AppRoute
 
             if ($request->server->get("REQUEST_URI")) {
                 $GET = $request->server->get("REQUEST_URI");
-            } else if ($request->server->get("REDIRECT_URL")) {
+            } elseif ($request->server->get("REDIRECT_URL")) {
                 $GET = $request->server->get("REDIRECT_URL");
             } else {
                 $GET = $request->query->get("q");

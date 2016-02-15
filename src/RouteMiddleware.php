@@ -1,13 +1,22 @@
 <?php
 /**
- * Created by PhpStorm.
+ * Created by OxGroup.media
  * User: Александр
  * Date: 05.12.2015
  * Time: 21:05
  */
 namespace Ox\Router;
+
+use Monolog\Handler\StreamHandler;
+use Monolog\Logger;
+use Whoops\Handler\JsonResponseHandler;
+use Whoops\Handler\PrettyPageHandler;
+use Whoops\Run;
+
 class RouteMiddleware
 {
+    public static $debug = true;
+    public static $handlerFormat = "pretty";
     public $middlewareNext = true;
     public $class;
     public static $nameGroup;
@@ -29,13 +38,12 @@ class RouteMiddleware
         $this->method = $method;
     }
 
-
-
     /**
      * @param       $middlewareName
      * @param array $rules
      *
      * @return $this
+     * @throws \Exception
      */
     public function middleware($middlewareName, $rules = array())
     {
@@ -44,8 +52,8 @@ class RouteMiddleware
                 $class = "\\OxApp\\middleware\\" . $middlewareName;
                 $controller = new  $class();
                 $this->middlewareNext = $controller->rules($rules);
-            } catch (\Exception $e) {
-                echo "ERROR: $e";
+            } catch (\RuntimeException $e) {
+                throw new \Exception($e);
             }
         }
         return $this;
@@ -82,16 +90,51 @@ class RouteMiddleware
     }
 
     /**
-     * @return $this
+     * @return bool
+     * @throws \Exception
      */
     public function go()
     {
         if ($this->middlewareNext == true and $this->class !== false) {
-
             if (!empty(self::$nameGroup)) {
                 $this->afterSetMiddlewareGroup(self::$nameGroup);
             }
-            $goRoute=new GoRoute();
+            $whoops = new Run;
+            $whoops->pushHandler(
+                function ($exception, $inspector, $whoops) {
+                    // Remove any previous output
+                    ob_get_level() and ob_end_clean();
+                    // Set response code
+                    http_response_code(500);
+                    $logger = new Logger('errors');
+                    $logger->pushHandler(new StreamHandler(__DIR__ . '/../../../../errors.log'));
+                    $logger->critical(
+                        $exception->getMessage(),
+                        array(
+                            'File' => $exception->getFile(),
+                            'Line' => $exception->getLine()
+                        )
+                    );
+                    // Display errors
+                    if (self::$debug == true) {
+                        assert_options(ASSERT_ACTIVE, true);
+                        if (self::$handlerFormat === "json") {
+                            $whoops->pushHandler(new JsonResponseHandler());
+                            header('Content-Type: application/json');
+                            self::$handlerFormat = "pretty";
+                        } else {
+                            $whoops->pushHandler(new PrettyPageHandler());
+                        }
+                        $whoops->handleException($exception);
+                    } else {
+                        Router::$statusCode = 505;
+                        header("Location: /505");
+                    }
+                    exit;
+                }
+            );
+            $whoops->register();
+            $goRoute = new GoRoute();
             $goRoute->fileController($this->route, $this->class, $this->method);
         }
         return true;

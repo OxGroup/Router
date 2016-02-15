@@ -1,13 +1,11 @@
 <?php
 /**
- * Created by PhpStorm.
+ * Created by OxGroup.media
  * User: Aliaxander
  * Date: 12.12.15
  * Time: 16:25
  */
-
 namespace Ox\Router;
-
 
 class GoRoute
 {
@@ -15,6 +13,8 @@ class GoRoute
      * @param        $route
      * @param        $class
      * @param string $method
+     *
+     * @throws \Exception
      */
     public function fileController($route, $class, $method = "")
     {
@@ -22,7 +22,7 @@ class GoRoute
         $file = str_replace("\\", "/", $file);
         if (is_readable($file) == false) {
             Router::$statusCode = "404";
-            die ($file . ' Controller Not Found');
+            echo($file . ' Controller Not Found');
         } else {
             $class .= "Controller";
             try {
@@ -30,37 +30,41 @@ class GoRoute
                 Router::$route = $route;
                 Router::$controller = $class;
                 Router::$routeCounts += 1;
-
                 $controller = new  $class();
                 if (is_subclass_of($controller, 'Ox\App')) {
                     if (!empty($method)) {
                         try {
                             $controller->$method();
                         } catch (\Exception $e) {
-                            echo "ERROR: $e";
+                            Router::$statusCode = "418";
+                            throw new \Exception($e);
                         }
                     } else {
                         if (!empty($_POST)) {
                             try {
                                 $controller->post();
-                            } catch (\Exception $e) {
-                                echo "ERROR: $e";
+                            } catch (\RuntimeException $e) {
+                                Router::$statusCode = "418";
+                                throw new \Exception($e);
                             }
                         } else {
                             try {
                                 $controller->view();
-                            } catch (\Exception $e) {
-                                echo "ERROR: $e";
+                            } catch (\RuntimeException $e) {
+                                Router::$statusCode = "418";
+                                throw new \Exception($e);
                             }
                         }
                     }
-                    die();
+                    if (Router::$doubleRoute == false) {
+                        die();
+                    }
                 } else {
                     Router::$statusCode = "418";
-                    die ('No extends App');
+                    //echo ('No extends App');
                 }
-            } catch (\Exception $e) {
-                echo "ERROR: $e";
+            } catch (\RuntimeException $e) {
+                throw new \Exception($e);
             }
         }
     }

@@ -22,7 +22,7 @@
 
 Controller:
 
-DIR: http/controllers
+DIR: apps/controllers
 
 Namespace: \OxApp\Controllers
 
@@ -31,7 +31,7 @@ NameController extends \Ox\App
 
 Middleware:
 
-DIR: http/middleware
+DIR: apps/middleware
 
 Namespace - \OxApp\middleware
 

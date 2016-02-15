@@ -14,9 +14,7 @@ class Router
     public static $statusCode;
     public static $routeCounts = 0;
     public static $doubleRoute = false;
-    public static $defaultRout = "";
-    public static $defaultNameSpace = "";
-
+    public static $defaultNameSpace="";
 
     /**
      * @param $rout
@@ -54,7 +52,6 @@ class Router
 
         RouteMiddleware::$middleware[$name] = $groups;
     }
-
 
     /**
      * @param          $name
