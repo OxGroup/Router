@@ -45,7 +45,11 @@ class AppRoute
         $method = false;
         $class = Router::$defaultNameSpace . $app;
         $route = $this->route;
-        $request = new Request();
+        $request = new Request(
+            $_GET,
+            $_POST,
+            $_SERVER
+        );
         if ($this->method === "ALL" or $this->method === $request->server->get("REQUEST_METHOD")) {
             $this->method = $request->server->get("REQUEST_METHOD");
 
