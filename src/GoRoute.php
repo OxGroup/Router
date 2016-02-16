@@ -18,7 +18,7 @@ class GoRoute
      */
     public function fileController($route, $class, $method = "")
     {
-        $file = "../apps/controllers/" . $class . "Controller.php";
+        $file = "../OxApp/controllers/" . $class . "Controller.php";
         $file = str_replace("\\", "/", $file);
         if (is_readable($file) == false) {
             Router::$statusCode = "404";
