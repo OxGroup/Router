@@ -45,11 +45,7 @@ class AppRoute
         $method = false;
         $class = Router::$defaultNameSpace . $app;
         $route = $this->route;
-        $request = new Request(
-            $_GET,
-            $_POST,
-            $_SERVER
-        );
+        $request = new Request();
         if ($this->method === "ALL" or $this->method === $request->server->get("REQUEST_METHOD")) {
             $this->method = $request->server->get("REQUEST_METHOD");
 
@@ -59,21 +55,21 @@ class AppRoute
             }
 
             if ($request->server->get("REQUEST_URI")) {
-                $GET = $request->server->get("REQUEST_URI");
+                $get = $request->server->get("REQUEST_URI");
             } elseif ($request->server->get("REDIRECT_URL")) {
-                $GET = $request->server->get("REDIRECT_URL");
+                $get = $request->server->get("REDIRECT_URL");
             } else {
-                $GET = $request->query->get("q");
+                $get = $request->query->get("q");
             }
-            $check = explode("?", $GET);
+            $check = explode("?", $get);
             if (isset($check[1])) {
-                $GET = $check[0];
+                $get = $check[0];
             }
-            if (substr($GET, -1) !== "/") {
-                $GET .= "/";
+            if (substr($get, -1) !== "/") {
+                $get .= "/";
             }
-            if ($GET{0} !== "/") {
-                $GET = "/" . $GET;
+            if ($get{0} !== "/") {
+                $get = "/" . $get;
             }
             if (substr($route, -1) !== "/") {
                 $route .= "/";
@@ -84,15 +80,15 @@ class AppRoute
             $SetGet = array();
             $setGetRoutes = explode("/", $route);
             if (0 !== count($setGetRoutes)) {
-                $getResut = explode("/", $GET);
-                $i = 0;
+                $getResut = explode("/", $get);
+                $countGet = 0;
                 foreach ($setGetRoutes as $rout) {
                     $testRoute = explode("=>", $rout);
-                    if (!empty($testRoute[1]) and isset($getResut[$i])) {
-                        $SetGet[$testRoute[1]] = $getResut[$i];
+                    if (!empty($testRoute[1]) and isset($getResut[$countGet])) {
+                        $SetGet[$testRoute[1]] = $getResut[$countGet];
                         $route = str_replace("{$testRoute[0]}=>$testRoute[1]", "$testRoute[0]", $route);
                     }
-                    $i++;
+                    $countGet++;
                 }
             }
             $before = array(":num", ":char", ":charNum", ":text", ":img", "/",);
@@ -106,7 +102,7 @@ class AppRoute
                 );
             $routePreg = str_replace($before, $after, $route);
             $routePreg = "/^" . $routePreg . "$/i";
-            if ((preg_match($routePreg, $GET) and $route != $GET) or $route == $GET) {
+            if ((preg_match($routePreg, $get) and $route != $get) or $route == $get) {
                 if (0 !== count($SetGet)) {
                     foreach ($SetGet as $keyGet => $valGet) {
                         $request->query->set($keyGet, $valGet);

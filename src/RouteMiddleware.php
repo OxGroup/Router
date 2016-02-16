@@ -94,7 +94,7 @@ class RouteMiddleware
      * @return bool
      * @throws \Exception
      */
-    public function go()
+    public function save()
     {
         if ($this->middlewareNext === true and $this->class !== false) {
             if (!empty(self::$nameGroup)) {
@@ -102,7 +102,7 @@ class RouteMiddleware
             }
             $whoops = new Run;
             $whoops->pushHandler(
-                function ($exception, $inspector, $whoops) {
+                function ($exception, $whoops) {
                     // Remove any previous output
                     ob_get_level() and ob_end_clean();
                     // Set response code
@@ -131,7 +131,6 @@ class RouteMiddleware
                         Router::$statusCode = 505;
                         header("Location: /505");
                     }
-                    exit;
                 }
             );
             $whoops->register();
