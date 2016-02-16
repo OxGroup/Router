@@ -1,6 +1,6 @@
 <?php
 /**
- * Created by OxGroup.media
+ * Created by OxGroupMedia
  * User: Aliaxander
  * Date: 12.12.15
  * Time: 16:25
@@ -20,7 +20,7 @@ class GoRoute
     {
         $file = "../OxApp/controllers/" . $class . "Controller.php";
         $file = str_replace("\\", "/", $file);
-        if (is_readable($file) == false) {
+        if (is_readable($file) === false) {
             Router::$statusCode = "404";
             echo($file . ' Controller Not Found');
         } else {

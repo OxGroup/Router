@@ -1,11 +1,12 @@
 <?php
 /**
- * Created by PhpStorm.
+ * Created by OxGroupMedia.
  * User: Александр
  * Date: 05.12.2015
  * Time: 19:56
  */
 namespace Ox\Router;
+
 class Router
 {
     private static $middlewareFilters = array();
@@ -15,7 +16,7 @@ class Router
     public static $routeCounts = 0;
     public static $doubleRoute = false;
     public static $defaultRout = "";
-    public static $defaultNameSpace="";
+    public static $defaultNameSpace = "";
 
     /**
      * @param $rout
@@ -33,8 +34,13 @@ class Router
      *
      * @return $this
      */
-    public static function addMiddlewareGroup($name, array $groups, $filtersMiddleware = array(), $defaultRout = "", $defaultNameSpace = "")
-    {
+    public static function addMiddlewareGroup(
+        $name,
+        array $groups,
+        $filtersMiddleware = array(),
+        $defaultRout = "",
+        $defaultNameSpace = ""
+    ) {
         if (!empty($filtersMiddleware)) {
             self::$middlewareFilters[$name] = $filtersMiddleware;
         }

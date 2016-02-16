@@ -1,6 +1,6 @@
 <?php
 /**
- * Created by OxGroup.media
+ * Created by OxGroupMedia
  * User: Александр
  * Date: 05.12.2015
  * Time: 21:05
@@ -20,7 +20,8 @@ class RouteMiddleware
     public $middlewareNext = true;
     public $class;
     public static $nameGroup;
-    private $route, $method;
+    private $route;
+    private $method;
     public static $middleware = array();
     public static $middlewareFilters = array();
 
@@ -45,7 +46,7 @@ class RouteMiddleware
      * @return $this
      * @throws \Exception
      */
-    public function middleware($middlewareName, $rules = array())
+    public function middleware($middlewareName, array $rules = array())
     {
         if ($this->middlewareNext == true and $this->class !== false) {
             try {
@@ -95,7 +96,7 @@ class RouteMiddleware
      */
     public function go()
     {
-        if ($this->middlewareNext == true and $this->class !== false) {
+        if ($this->middlewareNext === true and $this->class !== false) {
             if (!empty(self::$nameGroup)) {
                 $this->afterSetMiddlewareGroup(self::$nameGroup);
             }
