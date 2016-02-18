@@ -13,7 +13,7 @@
 # .idea/tasks.xml
 # .idea/dictionaries
 
-# Sensitive or high-churn files:
+# Sensitive || high-churn files:
 # .idea/dataSources.ids
 # .idea/dataSources.xml
 # .idea/sqlDataSources.xml
@@ -42,7 +42,7 @@
 # JIRA plugin
 atlassian-ide-plugin.xml
 
-# Crashlytics plugin (for Android Studio and IntelliJ)
+# Crashlytics plugin (for Android Studio &&IntelliJ)
 com_crashlytics_export_strings.xml
 crashlytics.properties
 crashlytics-build.properties
