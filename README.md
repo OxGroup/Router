@@ -1,28 +1,26 @@
 # Router
   
-  $route = new Router();
-  
-        $route->addGroupMiddleware("clientLocal", array(
+        Router::addGroupMiddleware("clientLocal", array(
             "Auth" => array("status" => "client"),
             "Domain" => array("hostname" => "localhost"),
             ),
             array("ToJson"=>array())
          );
 
-        $route->rout("/login")->app("login")->go();
+        Router::rout("/login")->app("login")->save();
 
         Router::setMiddlewareGroup("clientLocal",function(){
-             $route->rout("/")->app("index")->go();
-             $route->rout("/order/:num=>id")->app("order")->go();
-             $route->rout("/files/:img")->app("image")->go();
-             $route->rout("/uploads/:img")->app("image")->middleware("Domain",array("hostname"=>"other.dev")->go();
+              Router::rout("/")->app("index")->save();
+              Router::rout("/order/:num=>id")->app("order")->save();
+              Router::rout("/files/:img")->app("image")->save();
+              Router::rout("/uploads/:img")->app("image")->middleware("Domain",array("hostname"=>"other.dev")->save();
         });
         
         
 
 Controller:
 
-DIR: apps/controllers
+DIR: OxApp/controllers
 
 Namespace: \OxApp\Controllers
 
@@ -31,7 +29,7 @@ NameController extends \Ox\App
 
 Middleware:
 
-DIR: apps/middleware
+DIR: OxApp/middleware
 
 Namespace - \OxApp\middleware
 
