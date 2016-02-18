@@ -61,7 +61,6 @@ class GoRoute
                     }
                 } else {
                     Router::$statusCode = "418";
-                    //echo ('No extends App');
                 }
             } catch (\RuntimeException $e) {
                 throw new \Exception($e);

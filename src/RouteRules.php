@@ -18,6 +18,7 @@ class RouteRules
     public function app($appController)
     {
         $this->appController = $appController;
+
         return $this;
     }
 }

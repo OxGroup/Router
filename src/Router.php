@@ -79,8 +79,10 @@ class Router
             }
             $middlewareGroup->class = false;
             $data = $function(); // отложенное выполнение кода
+
             return $data;
         }
+
         return false;
     }
 }

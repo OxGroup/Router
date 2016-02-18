@@ -57,6 +57,7 @@ class RouteMiddleware
                 throw new \Exception($e);
             }
         }
+
         return $this;
     }
 
@@ -72,6 +73,7 @@ class RouteMiddleware
                 $this->middleware($name, $rule);
             }
         }
+
         return $this;
     }
 
@@ -87,6 +89,7 @@ class RouteMiddleware
                 $this->middleware($name, $rule);
             }
         }
+
         return $this;
     }
 
@@ -117,7 +120,7 @@ class RouteMiddleware
                         )
                     );
                     // Display errors
-                    if (self::$debug == true) {
+                    if (self::$debug === true) {
                         assert_options(ASSERT_ACTIVE, true);
                         if (self::$handlerFormat === "json") {
                             $whoops->pushHandler(new JsonResponseHandler());
@@ -137,6 +140,7 @@ class RouteMiddleware
             $goRoute = new GoRoute();
             $goRoute->fileController($this->route, $this->class, $this->method);
         }
+
         return true;
     }
 }

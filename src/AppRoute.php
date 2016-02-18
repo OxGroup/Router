@@ -32,6 +32,7 @@ class AppRoute
     public function method($method)
     {
         $this->method = $method;
+
         return $this;
     }
 
@@ -54,7 +55,6 @@ class AppRoute
             $this->method = $request->server->get("REQUEST_METHOD");
 
             if (!$request->query->get("q")) {
-                //$_GET['q'] = "/";
                 $request->query->set("q", "/");
             }
 
