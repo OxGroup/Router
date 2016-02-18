@@ -112,7 +112,7 @@ class AppRoute
                 );
             $routePreg = str_replace($before, $after, $route);
             $routePreg = "/^" . $routePreg . "$/i";
-            if ((preg_match($routePreg, $get) and $route != $get) or $route == $get) {
+            if ((preg_match($routePreg, $get) and $route !== $get) or $route === $get) {
                 if (0 !== count($SetGet)) {
                     foreach ($SetGet as $keyGet => $valGet) {
                         $request->query->set($keyGet, $valGet);

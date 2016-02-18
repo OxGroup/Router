@@ -48,7 +48,7 @@ class RouteMiddleware
      */
     public function middleware($middlewareName, array $rules = array())
     {
-        if ($this->middlewareNext == true and $this->class !== false) {
+        if ($this->middlewareNext === true and $this->class !== false) {
             try {
                 $class = "\\OxApp\\middleware\\" . $middlewareName;
                 $controller = new  $class();
@@ -117,7 +117,7 @@ class RouteMiddleware
                         )
                     );
                     // Display errors
-                    if (self::$debug == true) {
+                    if (self::$debug === true) {
                         assert_options(ASSERT_ACTIVE, true);
                         if (self::$handlerFormat === "json") {
                             $whoops->pushHandler(new JsonResponseHandler());

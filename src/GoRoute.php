@@ -56,8 +56,8 @@ class GoRoute
                             }
                         }
                     }
-                    if (Router::$doubleRoute == false) {
-                        die();
+                    if (Router::$doubleRoute === false) {
+                        throw new \Exception("Double route detect");
                     }
                 } else {
                     Router::$statusCode = "418";

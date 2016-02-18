@@ -72,7 +72,7 @@ class Router
         $middlewareGroup = new RouteMiddleware();
         $middlewareGroup->class = true;
         $result = $middlewareGroup->setMiddlewareGroup($name);
-        if ($result->middlewareNext == true) {
+        if ($result->middlewareNext === true) {
             if (!empty(self::$middlewareFilters)) {
                 RouteMiddleware::$nameGroup = $name;
                 RouteMiddleware::$middlewareFilters = self::$middlewareFilters;
