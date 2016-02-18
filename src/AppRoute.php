@@ -95,7 +95,13 @@ class AppRoute
                     $countGet++;
                 }
             }
-            $before = array(":num", ":char", ":charNum", ":text", ":img", "/",);
+            $before = array(":num",
+                ":char",
+                ":charNum",
+                ":text",
+                ":img",
+                "/",
+                );
             $after = array(
                 "[0-9]*",
                 "[A-Za-z]*",
