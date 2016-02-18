@@ -117,7 +117,7 @@ class RouteMiddleware
                         )
                     );
                     // Display errors
-                    if (self::$debug === true) {
+                    if (self::$debug == true) {
                         assert_options(ASSERT_ACTIVE, true);
                         if (self::$handlerFormat === "json") {
                             $whoops->pushHandler(new JsonResponseHandler());
