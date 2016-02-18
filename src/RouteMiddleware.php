@@ -48,7 +48,7 @@ class RouteMiddleware
      */
     public function middleware($middlewareName, array $rules = array())
     {
-        if ($this->middlewareNext === true and $this->class !== false) {
+        if ($this->middlewareNext === true && $this->class !== false) {
             try {
                 $class = "\\OxApp\\middleware\\" . $middlewareName;
                 $controller = new  $class();
@@ -96,7 +96,7 @@ class RouteMiddleware
      */
     public function save()
     {
-        if ($this->middlewareNext === true and $this->class !== false) {
+        if ($this->middlewareNext === true && $this->class !== false) {
             if (!empty(self::$nameGroup)) {
                 $this->afterSetMiddlewareGroup(self::$nameGroup);
             }
@@ -104,7 +104,7 @@ class RouteMiddleware
             $whoops->pushHandler(
                 function ($exception, $whoops) {
                     // Remove any previous output
-                    ob_get_level() and ob_end_clean();
+                    ob_get_level() && ob_end_clean();
                     // Set response code
                     http_response_code(500);
                     $logger = new Logger('errors');

@@ -50,7 +50,7 @@ class AppRoute
             $_POST,
             $_SERVER
         );
-        if ($this->method === "ALL" or $this->method === $request->server->get("REQUEST_METHOD")) {
+        if ($this->method === "ALL" || $this->method === $request->server->get("REQUEST_METHOD")) {
             $this->method = $request->server->get("REQUEST_METHOD");
 
             if (!$request->query->get("q")) {
@@ -88,7 +88,7 @@ class AppRoute
                 $countGet = 0;
                 foreach ($setGetRoutes as $rout) {
                     $testRoute = explode("=>", $rout);
-                    if (!empty($testRoute[1]) and isset($getResut[$countGet])) {
+                    if (!empty($testRoute[1]) && isset($getResut[$countGet])) {
                         $SetGet[$testRoute[1]] = $getResut[$countGet];
                         $route = str_replace("{$testRoute[0]}=>$testRoute[1]", "$testRoute[0]", $route);
                     }
@@ -112,7 +112,7 @@ class AppRoute
                 );
             $routePreg = str_replace($before, $after, $route);
             $routePreg = "/^" . $routePreg . "$/i";
-            if ((preg_match($routePreg, $get) and $route !== $get) or $route === $get) {
+            if ((preg_match($routePreg, $get) && $route !== $get) || $route === $get) {
                 if (0 !== count($SetGet)) {
                     foreach ($SetGet as $keyGet => $valGet) {
                         $request->query->set($keyGet, $valGet);
