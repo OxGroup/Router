@@ -46,11 +46,7 @@ class AppRoute
         $method = false;
         $class = Router::$defaultNameSpace . $app;
         $route = $this->route;
-        $request = new Request(
-            $_GET,
-            $_POST,
-            $_SERVER
-        );
+        $request = Request::createFromGlobals();
         if ($this->method === "ALL" || $this->method === $request->server->get("REQUEST_METHOD")) {
             $this->method = $request->server->get("REQUEST_METHOD");
 
@@ -58,13 +54,8 @@ class AppRoute
                 $request->query->set("q", "/");
             }
 
-            if ($request->server->get("REQUEST_URI")) {
-                $get = $request->server->get("REQUEST_URI");
-            } elseif ($request->server->get("REDIRECT_URL")) {
-                $get = $request->server->get("REDIRECT_URL");
-            } else {
-                $get = $request->query->get("q");
-            }
+            $get = $request->server->get("REQUEST_URI");
+            
             $check = explode("?", $get);
             if (isset($check[1])) {
                 $get = $check[0];
@@ -81,7 +72,7 @@ class AppRoute
             if ($route{0} !== "/") {
                 $route = "/" . $route;
             }
-            $SetGet = array();
+            $setGet = array();
             $setGetRoutes = explode("/", $route);
             if (0 !== count($setGetRoutes)) {
                 $getResut = explode("/", $get);
@@ -89,7 +80,7 @@ class AppRoute
                 foreach ($setGetRoutes as $rout) {
                     $testRoute = explode("=>", $rout);
                     if (!empty($testRoute[1]) && isset($getResut[$countGet])) {
-                        $SetGet[$testRoute[1]] = $getResut[$countGet];
+                        $setGet[$testRoute[1]] = $getResut[$countGet];
                         $route = str_replace("{$testRoute[0]}=>$testRoute[1]", "$testRoute[0]", $route);
                     }
                     $countGet++;
@@ -101,7 +92,7 @@ class AppRoute
                 ":text",
                 ":img",
                 "/",
-                );
+            );
             $after = array(
                 "[0-9]*",
                 "[A-Za-z]*",
@@ -109,16 +100,16 @@ class AppRoute
                 "[A-Za-z0-9- .,:%+;]*",
                 ".*[.](png|jpg|jpeg|gif)",
                 '\/',
-                );
+            );
             $routePreg = str_replace($before, $after, $route);
             $routePreg = "/^" . $routePreg . "$/i";
             if ((preg_match($routePreg, $get) && $route !== $get) || $route === $get) {
-                if (0 !== count($SetGet)) {
-                    foreach ($SetGet as $keyGet => $valGet) {
+                if (0 !== count($setGet)) {
+                    foreach ($setGet as $keyGet => $valGet) {
                         $request->query->set($keyGet, $valGet);
                     }
-                    $_GET = $SetGet + $_GET;
-                    $_REQUEST = $SetGet + $_REQUEST;
+                    $_GET = $setGet + $_GET;
+                    $_REQUEST = $setGet + $_REQUEST;
                 }
                 $resultRoute = explode("::", $class);
                 if (!empty($resultRoute[1])) {

@@ -7,6 +7,8 @@
  */
 namespace Ox\Router;
 
+use Symfony\Component\HttpFoundation\Request;
+
 class GoRoute
 {
     /**
@@ -22,8 +24,9 @@ class GoRoute
         $file = str_replace("\\", "/", $file);
         if (is_readable($file) === false) {
             Router::$statusCode = "404";
-            echo($file . ' Controller Not Found');
+            throw new \Exception($file . ' Controller Not Found');
         } else {
+            $request = Request::createFromGlobals();
             $class .= "Controller";
             try {
                 $class = "\\OxApp\\controllers\\" . $class;
@@ -40,7 +43,7 @@ class GoRoute
                             throw new \Exception($e);
                         }
                     } else {
-                        if (!empty($_POST)) {
+                        if ($request->server->get("REQUEST_METHOD")==="POST") {
                             try {
                                 $controller->post();
                             } catch (\RuntimeException $e) {
@@ -55,9 +58,6 @@ class GoRoute
                                 throw new \Exception($e);
                             }
                         }
-                    }
-                    if (Router::$doubleRoute === false) {
-                        throw new \Exception("Double route detect");
                     }
                 } else {
                     Router::$statusCode = "418";

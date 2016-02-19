@@ -14,7 +14,6 @@ class Router
     public static $controller;
     public static $statusCode;
     public static $routeCounts = 0;
-    public static $doubleRoute = false;
     public static $defaultRout = "";
     public static $defaultNameSpace = "";
 
