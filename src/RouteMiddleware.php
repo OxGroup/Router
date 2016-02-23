@@ -104,38 +104,33 @@ class RouteMiddleware
                 $this->afterSetMiddlewareGroup(self::$nameGroup);
             }
             $whoops = new Run;
-            $whoops->pushHandler(
-                function ($exception, $whoops) {
-                    // Remove any previous output
-                    ob_get_level() && ob_end_clean();
-                    // Set response code
-                    http_response_code(500);
-                    $logger = new Logger('errors');
-                    $logger->pushHandler(new StreamHandler(__DIR__ . '/../../../../errors.log'));
-                    $logger->critical(
-                        $exception->getMessage(),
-                        array(
-                            'File' => $exception->getFile(),
-                            'Line' => $exception->getLine()
-                        )
-                    );
-                    // Display errors
-                    if (self::$debug === true) {
-                        assert_options(ASSERT_ACTIVE, true);
-                        if (self::$handlerFormat === "json") {
-                            $whoops->pushHandler(new JsonResponseHandler());
-                            header('Content-Type: application/json');
-                            self::$handlerFormat = "pretty";
-                        } else {
-                            $whoops->pushHandler(new PrettyPageHandler());
-                        }
-                        $whoops->handleException($exception);
-                    } else {
-                        Router::$statusCode = 505;
-                        header("Location: /505");
-                    }
+            // Remove any previous output
+            ob_get_level() && ob_end_clean();
+            // Set response code
+            http_response_code(500);
+            $logger = new Logger('errors');
+
+            $logger->pushHandler(new StreamHandler(__DIR__ . '/../../../../errors.log'));
+
+            // Display errors
+            if (self::$debug === true) {
+                assert_options(ASSERT_ACTIVE, true);
+                if (self::$handlerFormat === "json") {
+                    $whoops->pushHandler(new JsonResponseHandler());
+                    $whoops->pushHandler(function ($one) use ($logger) {
+                        $logger->addError($one);
+                    });
+
+                    header('Content-Type: application/json');
+                    self::$handlerFormat = "pretty";
+                } else {
+                    $whoops->pushHandler(new PrettyPageHandler());
                 }
-            );
+            } else {
+                Router::$statusCode = 505;
+                header("Location: /505");
+            }
+
             $whoops->register();
             $goRoute = new GoRoute();
             $goRoute->fileController($this->route, $this->class, $this->method);
