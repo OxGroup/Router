@@ -24,6 +24,7 @@ class Router
      */
     public static function rout($rout)
     {
+        $rout = Helper::fixStandardRoute($rout);
         return new AppRoute(self::$defaultRout . $rout);
     }
 
@@ -39,8 +40,9 @@ class Router
         $filtersMiddleware = array(),
         $defaultRout = "",
         $defaultNameSpace = ""
-    ) {
-        if (!empty($filtersMiddleware)) {
+    )
+    {
+        if (0 !== count($filtersMiddleware)) {
             self::$middlewareFilters[$name] = $filtersMiddleware;
         }
 

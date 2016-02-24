@@ -13,6 +13,8 @@ class AppRoute
 {
     protected $method = "ALL";
     protected $route;
+    protected $methodRoute = false;
+    protected $classRoute;
 
     /**
      * AppRoute constructor.
@@ -43,86 +45,85 @@ class AppRoute
      */
     public function app($app)
     {
-        $method = false;
-        $class = Router::$defaultNameSpace . $app;
-        $route = $this->route;
+        $this->classRoute = Router::$defaultNameSpace . $app;
+
         $request = Request::createFromGlobals();
-        if ($this->method === "ALL" || $this->method === $request->server->get("REQUEST_METHOD")) {
-            $this->method = $request->server->get("REQUEST_METHOD");
-
-            if (!$request->query->get("q")) {
-                $request->query->set("q", "/");
-            }
-
-            $get = $request->server->get("REQUEST_URI");
-            
-            $check = explode("?", $get);
-            if (isset($check[1])) {
-                $get = $check[0];
-            }
-            if (substr($get, -1) !== "/") {
-                $get .= "/";
-            }
-            if ($get{0} !== "/") {
-                $get = "/" . $get;
-            }
-            if (substr($route, -1) !== "/") {
-                $route .= "/";
-            }
-            if ($route{0} !== "/") {
-                $route = "/" . $route;
-            }
-            $setGet = array();
-            $setGetRoutes = explode("/", $route);
-            if (0 !== count($setGetRoutes)) {
-                $getResut = explode("/", $get);
-                $countGet = 0;
-                foreach ($setGetRoutes as $rout) {
-                    $testRoute = explode("=>", $rout);
-                    if (!empty($testRoute[1]) && isset($getResut[$countGet])) {
-                        $setGet[$testRoute[1]] = $getResut[$countGet];
-                        $route = str_replace("{$testRoute[0]}=>$testRoute[1]", "$testRoute[0]", $route);
-                    }
-                    $countGet++;
-                }
-            }
-            $before = array(":num",
-                ":char",
-                ":charNum",
-                ":text",
-                ":img",
-                "/",
-            );
-            $after = array(
-                "[0-9]*",
-                "[A-Za-z]*",
-                "[A-Za-z0-9-]*",
-                "[A-Za-z0-9- .,:%+;]*",
-                ".*[.](png|jpg|jpeg|gif)",
-                '\/',
-            );
-            $routePreg = str_replace($before, $after, $route);
-            $routePreg = "/^" . $routePreg . "$/i";
-            if ((preg_match($routePreg, $get) && $route !== $get) || $route === $get) {
-                if (0 !== count($setGet)) {
-                    foreach ($setGet as $keyGet => $valGet) {
-                        $request->query->set($keyGet, $valGet);
-                    }
-                    $_GET = $setGet + $_GET;
-                    $_REQUEST = $setGet + $_REQUEST;
-                }
-                $resultRoute = explode("::", $class);
-                if (!empty($resultRoute[1])) {
-                    $method = $resultRoute[1];
-                    $class = $resultRoute[0];
-                }
-            } else {
-                $class = false;
-            }
-        } else {
-            $class = false;
+        if (!$request->query->get("q")) {
+            $request->query->set("q", "/");
         }
 
-        return new RouteMiddleware($route, $class, $method);
+        if ($this->method === "ALL" || $this->method === $request->server->get("REQUEST_METHOD")) {
+            $this->useRoute($this->route);
+        } else {
+            $this->classRoute = false;
+        }
+
+        return new RouteMiddleware($this->route, $this->classRoute, $this->methodRoute);
+    }
+
+    /**
+     * @param $route
+     */
+    public function useRoute($route)
+    {
+        $request = Request::createFromGlobals();
+        $this->method = $request->server->get("REQUEST_METHOD");
+        $get = $request->server->get("REQUEST_URI");
+
+        $check = explode("?", $get);
+        if (isset($check[1])) {
+            $get = $check[0];
+        }
+        $get = Helper::fixStandardRoute($get);
+
+        $setGet = array();
+        $setGetRoutes = explode("/", $route);
+        if (0 !== count($setGetRoutes)) {
+            $getResut = explode("/", $get);
+            $countGet = 0;
+            foreach ($setGetRoutes as $rout) {
+                $testRoute = explode("=>", $rout);
+                if (!empty($testRoute[1]) && isset($getResut[$countGet])) {
+                    $setGet[$testRoute[1]] = $getResut[$countGet];
+                    $route = str_replace("{$testRoute[0]}=>$testRoute[1]", "$testRoute[0]", $route);
+                }
+                $countGet++;
+            }
+        }
+        $routePreg = Helper::getMacrosMatch($route);
+
+        if ((preg_match($routePreg, $get) && $route !== $get) || $route === $get) {
+            $this->readyRout($setGet);
+        } else {
+            $this->classRoute = false;
+        }
+    }
+
+    /**
+     * @param $setGet
+     */
+    public function readyRout($setGet)
+    {
+        $request = Request::createFromGlobals();
+        if (0 !== count($setGet)) {
+            foreach ($setGet as $keyGet => $valGet) {
+                $request->query->set($keyGet, $valGet);
+            }
+            $this->addGlobalRequest($setGet);
+        }
+        $resultRoute = explode("::", $this->classRoute);
+        if (!empty($resultRoute[1])) {
+            $this->methodRoute = $resultRoute[1];
+            $this->classRoute = $resultRoute[0];
+        }
+    }
+
+    /**
+     * @param $setArray
+     */
+    public function addGlobalRequest($setArray)
+    {
+        $_GET = $setArray + $_GET;
+        $_REQUEST = $setArray + $_REQUEST;
     }
 }
