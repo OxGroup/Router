@@ -104,10 +104,6 @@ class RouteMiddleware
                 $this->afterSetMiddlewareGroup(self::$nameGroup);
             }
             $whoops = new Run;
-            // Remove any previous output
-            ob_get_level() && ob_end_clean();
-            // Set response code
-            http_response_code(500);
             $logger = new Logger('errors');
 
             $logger->pushHandler(new StreamHandler(__DIR__ . '/../../../../errors.log'));
@@ -119,6 +115,8 @@ class RouteMiddleware
                     $whoops->pushHandler(new JsonResponseHandler());
                     $whoops->pushHandler(function ($one) use ($logger) {
                         $logger->addError($one);
+                        ob_get_level() && ob_end_clean();
+                        http_response_code(500);
                     });
 
                     header('Content-Type: application/json');
