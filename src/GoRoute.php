@@ -8,6 +8,7 @@
 namespace Ox\Router;
 
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 class GoRoute
 {
@@ -20,6 +21,7 @@ class GoRoute
      */
     public function fileController($route, $class, $method = "")
     {
+        $response = new Response();
         $file = "../OxApp/controllers/" . $class . "Controller.php";
         $file = str_replace("\\", "/", $file);
         if (is_readable($file) === false) {
@@ -39,6 +41,8 @@ class GoRoute
                         try {
                             $controller->$method();
                         } catch (\Exception $e) {
+                            $response->setStatusCode(Response::HTTP_BAD_GATEWAY);
+                            $response->send();
                             Router::$statusCode = "418";
                             throw new \Exception($e);
                         }
@@ -47,6 +51,8 @@ class GoRoute
                             try {
                                 $controller->post();
                             } catch (\RuntimeException $e) {
+                                $response->setStatusCode(Response::HTTP_BAD_GATEWAY);
+                                $response->send();
                                 Router::$statusCode = "418";
                                 throw new \Exception($e);
                             }
@@ -54,15 +60,21 @@ class GoRoute
                             try {
                                 $controller->view();
                             } catch (\RuntimeException $e) {
+                                $response->setStatusCode(Response::HTTP_BAD_GATEWAY);
+                                $response->send();
                                 Router::$statusCode = "418";
                                 throw new \Exception($e);
                             }
                         }
                     }
                 } else {
+                    $response->setStatusCode(Response::HTTP_METHOD_NOT_ALLOWED);
+                    $response->send();
                     Router::$statusCode = "418";
                 }
             } catch (\RuntimeException $e) {
+                $response->setStatusCode(Response::HTTP_BAD_GATEWAY);
+                $response->send();
                 throw new \Exception($e);
             }
         }
