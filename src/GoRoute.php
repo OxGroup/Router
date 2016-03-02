@@ -26,6 +26,8 @@ class GoRoute
         $file = str_replace("\\", "/", $file);
         if (is_readable($file) === false) {
             Router::$statusCode = "404";
+            $response->setStatusCode(Response::HTTP_METHOD_NOT_ALLOWED);
+            $response->send();
             throw new \Exception($file . ' Controller Not Found');
         } else {
             $request = Request::createFromGlobals();
