@@ -1,6 +1,6 @@
 <?php
 /**
- * Created by PhpStorm.
+ * Created by OxGroup.
  * User: Aliaxander
  * Date: 24.02.16
  * Time: 15:54
@@ -8,6 +8,11 @@
 
 namespace Ox\Router;
 
+/**
+ * Class Helper
+ *
+ * @package Ox\Router
+ */
 class Helper
 {
     /**

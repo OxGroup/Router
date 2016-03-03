@@ -1,6 +1,6 @@
 <?php
 /**
- * Created by OxGroupMedia.
+ * Created by OxGroup.
  * User: Александр
  * Date: 05.12.2015
  * Time: 20:52
@@ -9,6 +9,11 @@ namespace Ox\Router;
 
 use Symfony\Component\HttpFoundation\Request;
 
+/**
+ * Class AppRoute
+ *
+ * @package Ox\Router
+ */
 class AppRoute
 {
     protected $method = "ALL";

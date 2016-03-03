@@ -1,12 +1,17 @@
 <?php
 /**
- * Created by OxGroupMedia.
+ * Created by OxGroup.
  * User: Александр
  * Date: 05.12.2015
  * Time: 19:56
  */
 namespace Ox\Router;
 
+/**
+ * Class Router
+ *
+ * @package Ox\Router
+ */
 class Router
 {
     private static $middlewareFilters = array();

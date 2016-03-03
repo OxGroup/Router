@@ -1,6 +1,6 @@
 <?php
 /**
- * Created by OxGroupMedia
+ * Created by OxGroup
  * User: Александр
  * Date: 05.12.2015
  * Time: 21:05
@@ -13,6 +13,11 @@ use Whoops\Handler\JsonResponseHandler;
 use Whoops\Handler\PrettyPageHandler;
 use Whoops\Run;
 
+/**
+ * Class RouteMiddleware
+ *
+ * @package Ox\Router
+ */
 class RouteMiddleware
 {
     public static $debug = true;

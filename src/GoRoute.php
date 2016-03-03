@@ -1,6 +1,6 @@
 <?php
 /**
- * Created by OxGroupMedia
+ * Created by OxGroup
  * User: Aliaxander
  * Date: 12.12.15
  * Time: 16:25
@@ -10,6 +10,11 @@ namespace Ox\Router;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
+/**
+ * Class GoRoute
+ *
+ * @package Ox\Router
+ */
 class GoRoute
 {
     /**
