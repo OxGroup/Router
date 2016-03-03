@@ -25,6 +25,7 @@ class Router
     public static function rout($rout)
     {
         $rout = Helper::fixStandardRoute($rout);
+
         return new AppRoute(self::$defaultRout . $rout);
     }
 
@@ -34,26 +35,20 @@ class Router
      *
      * @return $this
      */
-    public static function addMiddlewareGroup(
-        $name,
-        array $groups,
-        $filtersMiddleware = array(),
-        $defaultRout = "",
-        $defaultNameSpace = ""
-    )
+    public static function addMiddlewareGroup($name, array $groups, $filters = array(), $rout = "", $nameSpace = "")
     {
-        if (0 !== count($filtersMiddleware)) {
-            self::$middlewareFilters[$name] = $filtersMiddleware;
+        if (0 !== count($filters)) {
+            self::$middlewareFilters[$name] = $filters;
         }
 
-        if (!empty($defaultRout)) {
-            self::$defaultRout = $defaultRout;
+        if (!empty($rout)) {
+            self::$defaultRout = $rout;
         } else {
             self::$defaultRout = "";
         }
 
-        if (!empty($defaultNameSpace)) {
-            self::$defaultNameSpace = $defaultNameSpace;
+        if (!empty($nameSpace)) {
+            self::$defaultNameSpace = $nameSpace;
         } else {
             self::$defaultNameSpace = "";
         }

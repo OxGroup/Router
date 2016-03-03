@@ -10,6 +10,11 @@ namespace Ox\Router;
 
 class Helper
 {
+    /**
+     * @param $input
+     *
+     * @return string
+     */
     public static function fixStandardRoute($input)
     {
         if (substr($input, -1) !== "/") {
@@ -21,6 +26,11 @@ class Helper
         return $input;
     }
 
+    /**
+     * @param $input
+     *
+     * @return mixed|string
+     */
     public static function getMacrosMatch($input)
     {
         $before = array(":num",
