@@ -22,6 +22,7 @@ class RouteMiddleware
     public static $nameGroup;
     private $route;
     private $method;
+    protected static $middlewareCache = array();
     public static $middleware = array();
     public static $middlewareFilters = array();
 
@@ -48,11 +49,14 @@ class RouteMiddleware
      */
     public function middleware($middlewareName, array $rules = array())
     {
-        if ($this->middlewareNext === true && $this->class !== false) {
+        if (isset($middlewareCache[$middlewareName][json_encode($rules)])) {
+            $this->middlewareNext = $middlewareCache[$middlewareName][json_encode($rules)];
+        } elseif ($this->middlewareNext === true && $this->class !== false) {
             try {
                 $class = "\\OxApp\\middleware\\" . $middlewareName;
                 $controller = new  $class();
                 $this->middlewareNext = $controller->rules($rules);
+                $middlewareCache[$middlewareName][json_encode($rules)] = $this->middlewareNext;
             } catch (\RuntimeException $e) {
                 throw new \Exception($e);
             }
