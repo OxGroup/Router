@@ -18,6 +18,9 @@ use Symfony\Component\HttpFoundation\Response;
 class GoRoute
 {
 
+    /**
+     * @var array
+     */
     public $response = array();
 
     /**
@@ -50,6 +53,12 @@ class GoRoute
         }
     }
 
+    /**
+     * @param $class
+     * @param $method
+     *
+     * @throws \Exception
+     */
     protected function useMethod($class, $method)
     {
         $class = "\\OxApp\\controllers\\" . $class;
@@ -72,6 +81,11 @@ class GoRoute
         }
     }
 
+    /**
+     * @param $controller
+     *
+     * @throws \Exception
+     */
     protected function switchMethod($controller)
     {
         $request = Request::createFromGlobals();
@@ -94,6 +108,12 @@ class GoRoute
         }
     }
 
+    /**
+     * @param $controller
+     * @param $method
+     *
+     * @throws \Exception
+     */
     protected function tryRunMethod($controller, $method)
     {
         try {
@@ -105,6 +125,9 @@ class GoRoute
         }
     }
 
+    /**
+     * @param $response
+     */
     protected function sandResponseCore($response)
     {
         $this->response->setStatusCode($response);
