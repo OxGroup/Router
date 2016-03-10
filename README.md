@@ -16,6 +16,7 @@
          );
 
         Router::rout("/login")->app("login")->save();
+        Router::rout("/get")->method("GET")->app("login")->save();
 
         Router::setMiddlewareGroup("clientLocal",function(){
               Router::rout("/")->app("index")->save();
@@ -30,7 +31,7 @@ Controller:
 
 DIR: OxApp/controllers
 
-Namespace: \OxApp\Controllers
+Namespace: \OxApp\controllers
 
 NameController extends \Ox\App
 
