@@ -75,6 +75,7 @@ class GoRoute
             } else {
                 $this->switchMethod($controller);
             }
+            $this->sandResponseCore(Response::HTTP_OK);
         } else {
             $this->sandResponseCore(Response::HTTP_METHOD_NOT_ALLOWED);
             Router::$statusCode = "418";
