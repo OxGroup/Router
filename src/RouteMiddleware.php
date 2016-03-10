@@ -52,7 +52,7 @@ class RouteMiddleware
      * @return $this
      * @throws \Exception
      */
-    public function middleware($middlewareName, array $rules = array())
+    protected function middleware($middlewareName, array $rules = array())
     {
         if (isset($middlewareCache[$middlewareName][json_encode($rules)])) {
             $this->middlewareNext = $middlewareCache[$middlewareName][json_encode($rules)];
@@ -91,7 +91,7 @@ class RouteMiddleware
      *
      * @return $this
      */
-    public function afterSetMiddlewareGroup($name)
+    protected function afterSetMiddlewareGroup($name)
     {
         if (!empty(self::$middlewareFilters[$name])) {
             foreach (self::$middlewareFilters[$name] as $name => $rule) {

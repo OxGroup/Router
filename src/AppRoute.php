@@ -69,7 +69,7 @@ class AppRoute
     /**
      * @param $route
      */
-    public function useRoute($route)
+    protected function useRoute($route)
     {
         $request = Request::createFromGlobals();
         $this->method = $request->server->get("REQUEST_METHOD");
@@ -107,7 +107,7 @@ class AppRoute
     /**
      * @param $setGet
      */
-    public function readyRout($setGet)
+    protected function readyRout($setGet)
     {
         $request = Request::createFromGlobals();
         if (0 !== count($setGet)) {
@@ -126,7 +126,7 @@ class AppRoute
     /**
      * @param $setArray
      */
-    public function addGlobalRequest($setArray)
+    protected function addGlobalRequest($setArray)
     {
         $_GET = $setArray + $_GET;
         $_REQUEST = $setArray + $_REQUEST;
