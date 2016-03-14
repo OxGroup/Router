@@ -122,22 +122,16 @@ class RouteMiddleware
                 assert_options(ASSERT_ACTIVE, true);
                 if (self::$handlerFormat === "json") {
                     $whoops->pushHandler(new JsonResponseHandler());
-                    $whoops->pushHandler(function ($one) use ($logger) {
-                        $logger->addError($one);
-                        ob_get_level() && ob_end_clean();
-                        http_response_code(500);
-                    });
-
                     header('Content-Type: application/json');
                     self::$handlerFormat = "pretty";
                 } else {
                     $whoops->pushHandler(new PrettyPageHandler());
                 }
-            } else {
-                Router::$statusCode = 505;
-                header("Location: /505");
             }
-
+            $whoops->pushHandler(function ($one) use ($logger) {
+                $logger->addError($one);
+                ob_get_level() && ob_end_clean();
+            });
             $whoops->register();
             $goRoute = new GoRoute();
             $goRoute->fileController($this->route, $this->class, $this->method);
