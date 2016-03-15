@@ -24,6 +24,14 @@ class GoRoute
     public $response = array();
 
     /**
+     * GoRoute constructor.
+     */
+    public function __construct()
+    {
+        $this->response = new Response();
+    }
+
+    /**
      * @param        $route
      * @param        $class
      * @param string $method
@@ -32,12 +40,11 @@ class GoRoute
      */
     public function fileController($route, $class, $method = "")
     {
-        $this->response = new Response();
         $file = "../OxApp/controllers/" . $class . "Controller.php";
         $file = str_replace("\\", "/", $file);
         if (is_readable($file) === false) {
             Router::$statusCode = "404";
-            $this->sandResponseCore(Response::HTTP_METHOD_NOT_ALLOWED);
+            $this->sandResponseCode(Response::HTTP_METHOD_NOT_ALLOWED);
             throw new \Exception($file . ' Controller Not Found');
         } else {
             $class .= "Controller";
@@ -47,7 +54,7 @@ class GoRoute
                 Router::$controller = $class;
                 Router::$routeCounts += 1;
             } catch (\RuntimeException $e) {
-                $this->sandResponseCore(Response::HTTP_BAD_GATEWAY);
+                $this->sandResponseCode(Response::HTTP_BAD_GATEWAY);
                 throw new \Exception($e);
             }
         }
