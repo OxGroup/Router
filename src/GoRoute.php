@@ -72,12 +72,7 @@ class GoRoute
         $controller = new  $class();
         if (is_subclass_of($controller, 'Ox\App')) {
             if (!empty($method)) {
-                try {
-                    $controller->$method();
-                } catch (\Exception $e) {
-                    $this->sandResponseCode(Response::HTTP_METHOD_NOT_ALLOWED);
-                    throw new \Exception($e);
-                }
+                $this->tryRunMethod($controller, $method);
             } else {
                 $request = Request::createFromGlobals();
                 $this->tryRunMethod($controller, strtolower($request->server->get("REQUEST_METHOD")));
@@ -98,7 +93,7 @@ class GoRoute
     {
         try {
             $controller->$method();
-        } catch (\RuntimeException $e) {
+        } catch (\Exception $e) {
             $this->sandResponseCode(Response::HTTP_METHOD_NOT_ALLOWED);
             throw new \Exception($e);
         }
