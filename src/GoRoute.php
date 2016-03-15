@@ -68,44 +68,16 @@ class GoRoute
                 try {
                     $controller->$method();
                 } catch (\Exception $e) {
-                    $this->sandResponseCore(Response::HTTP_BAD_GATEWAY);
-                    Router::$statusCode = "418";
+                    $this->sandResponseCode(Response::HTTP_METHOD_NOT_ALLOWED);
                     throw new \Exception($e);
                 }
             } else {
-                $this->switchMethod($controller);
+                $request = Request::createFromGlobals();
+                $this->tryRunMethod($controller, strtolower($request->server->get("REQUEST_METHOD")));
             }
-            $this->sandResponseCore(Response::HTTP_OK);
+            $this->sandResponseCode(Response::HTTP_OK);
         } else {
-            $this->sandResponseCore(Response::HTTP_METHOD_NOT_ALLOWED);
-            Router::$statusCode = "418";
-        }
-    }
-
-    /**
-     * @param $controller
-     *
-     * @throws \Exception
-     */
-    protected function switchMethod($controller)
-    {
-        $request = Request::createFromGlobals();
-        switch ($request->server->get("REQUEST_METHOD")) {
-            case ("POST"):
-                $this->tryRunMethod($controller, "post");
-                break;
-            case ("PUT"):
-                $this->tryRunMethod($controller, "put");
-                break;
-            case ("UPDATE"):
-                $this->tryRunMethod($controller, "update");
-                break;
-            case ("DELETE"):
-                $this->tryRunMethod($controller, "delete");
-                break;
-            default:
-                $this->tryRunMethod($controller, "view");
-                break;
+            $this->sandResponseCode(Response::HTTP_METHOD_NOT_ALLOWED);
         }
     }
 
@@ -120,8 +92,7 @@ class GoRoute
         try {
             $controller->$method();
         } catch (\RuntimeException $e) {
-            $this->sandResponseCore(Response::HTTP_BAD_GATEWAY);
-            Router::$statusCode = "418";
+            $this->sandResponseCode(Response::HTTP_METHOD_NOT_ALLOWED);
             throw new \Exception($e);
         }
     }
@@ -129,7 +100,7 @@ class GoRoute
     /**
      * @param $response
      */
-    protected function sandResponseCore($response)
+    protected function sandResponseCode($response)
     {
         $this->response->setStatusCode($response);
         $this->response->send();
