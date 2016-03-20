@@ -66,7 +66,11 @@ class GoRoute
     protected function useMethod($class, $method)
     {
         $class = "\\OxApp\\controllers\\" . $class;
-        $controller = new  $class();
+        try {
+            $controller = new  $class();
+        } catch (\Exception $e) {
+            throw new \Exception($e);
+        }
         if (is_subclass_of($controller, 'Ox\App')) {
             if (!empty($method)) {
                 $this->tryRunMethod($controller, $method);
@@ -90,10 +94,8 @@ class GoRoute
     protected function tryRunMethod($controller, $method)
     {
         try {
-            $controller=new $controller();
             return $controller->$method();
         } catch (\Exception $e) {
-            $this->sandResponseCode(Response::HTTP_METHOD_NOT_ALLOWED);
             throw new \Exception($e);
         }
     }
