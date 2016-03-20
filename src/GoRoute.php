@@ -43,8 +43,6 @@ class GoRoute
         $file = "../OxApp/controllers/" . $class . "Controller.php";
         $file = str_replace("\\", "/", $file);
         if (is_readable($file) === false) {
-            Router::$statusCode = "404";
-            $this->sandResponseCode(Response::HTTP_METHOD_NOT_ALLOWED);
             throw new \Exception($file . ' Controller Not Found');
         } else {
             $class .= "Controller";
@@ -54,7 +52,6 @@ class GoRoute
                 Router::$controller = $class;
                 Router::$routeCounts += 1;
             } catch (\RuntimeException $e) {
-                $this->sandResponseCode(Response::HTTP_BAD_GATEWAY);
                 throw new \Exception($e);
             }
         }
@@ -87,12 +84,14 @@ class GoRoute
      * @param $controller
      * @param $method
      *
+     * @return mixed
      * @throws \Exception
      */
     protected function tryRunMethod($controller, $method)
     {
         try {
-            $controller->$method();
+            $controller=new $controller();
+            return $controller->$method();
         } catch (\Exception $e) {
             $this->sandResponseCode(Response::HTTP_METHOD_NOT_ALLOWED);
             throw new \Exception($e);
