@@ -9,6 +9,7 @@ namespace Ox\Router;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Whoops\Exception\ErrorException;
 
 /**
  * Class GoRoute
@@ -99,7 +100,7 @@ class GoRoute
     {
         try {
             return $controller->$method();
-        } catch (\Exception $e) {
+        } catch (\RuntimeException $e) {
             throw new \Exception($e);
         }
     }
