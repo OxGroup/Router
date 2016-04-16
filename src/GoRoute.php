@@ -9,6 +9,7 @@ namespace Ox\Router;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Whoops\Exception\ErrorException;
 
 /**
  * Class GoRoute
@@ -43,8 +44,6 @@ class GoRoute
         $file = "../OxApp/controllers/" . $class . "Controller.php";
         $file = str_replace("\\", "/", $file);
         if (is_readable($file) === false) {
-            Router::$statusCode = "404";
-            $this->sandResponseCode(Response::HTTP_METHOD_NOT_ALLOWED);
             throw new \Exception($file . ' Controller Not Found');
         } else {
             $class .= "Controller";
@@ -54,7 +53,6 @@ class GoRoute
                 Router::$controller = $class;
                 Router::$routeCounts += 1;
             } catch (\RuntimeException $e) {
-                $this->sandResponseCode(Response::HTTP_BAD_GATEWAY);
                 throw new \Exception($e);
             }
         }
@@ -69,15 +67,23 @@ class GoRoute
     protected function useMethod($class, $method)
     {
         $class = "\\OxApp\\controllers\\" . $class;
-        $controller = new  $class();
+        try {
+            $controller = new  $class();
+        } catch (\Exception $e) {
+            throw new \Exception($e);
+        }
         if (is_subclass_of($controller, 'Ox\App')) {
             if (!empty($method)) {
-                $this->tryRunMethod($controller, $method);
+                $result = $this->tryRunMethod($controller, $method);
             } else {
                 $request = Request::createFromGlobals();
-                $this->tryRunMethod($controller, strtolower($request->server->get("REQUEST_METHOD")));
+                $result = $this->tryRunMethod($controller, strtolower($request->server->get("REQUEST_METHOD")));
             }
-            $this->sandResponseCode(Response::HTTP_OK);
+            $response = new Response(
+                $result,
+                Response::HTTP_OK
+            );
+            $response->send();
         } else {
             $this->sandResponseCode(Response::HTTP_METHOD_NOT_ALLOWED);
         }
@@ -87,15 +93,34 @@ class GoRoute
      * @param $controller
      * @param $method
      *
+     * @return mixed
      * @throws \Exception
      */
     protected function tryRunMethod($controller, $method)
     {
-        try {
-            $controller->$method();
-        } catch (\Exception $e) {
-            $this->sandResponseCode(Response::HTTP_METHOD_NOT_ALLOWED);
-            throw new \Exception($e);
+        if ($method === "options") {
+            $classMethods = get_class_methods($controller);
+            $classMethodsResult = ["options"];
+            foreach ($classMethods as $val) {
+                if (!in_array($val, array("__construct", "__distruct"))) {
+                    $classMethodsResult[] = $val;
+                }
+            }
+            $acceptMethods = strtoupper(implode(",", $classMethodsResult));
+            $response = new Response(
+                "",
+                Response::HTTP_OK
+            );
+            $response->headers->set("Allow", $acceptMethods);
+            $response->headers->set("access-control-allow-methods", $acceptMethods);
+            $response->send();
+
+        } else {
+            try {
+                return $controller->$method();
+            } catch (\RuntimeException $e) {
+                throw new \Exception($e);
+            }
         }
     }
 
