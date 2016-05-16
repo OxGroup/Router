@@ -7,8 +7,6 @@
  */
 namespace Ox\Router;
 
-use Symfony\Component\HttpFoundation\Request;
-
 /**
  * Class AppRoute
  *
@@ -20,7 +18,7 @@ class AppRoute
     protected $route;
     protected $methodRoute = false;
     protected $classRoute;
-
+    
     /**
      * AppRoute constructor.
      *
@@ -30,7 +28,7 @@ class AppRoute
     {
         $this->route = $route;
     }
-
+    
     /**
      * @param $method
      *
@@ -39,10 +37,10 @@ class AppRoute
     public function method($method)
     {
         $this->method = $method;
-
+        
         return $this;
     }
-
+    
     /**
      * @param $app
      *
@@ -51,42 +49,54 @@ class AppRoute
     public function app($app)
     {
         $this->classRoute = Router::$defaultNameSpace . $app;
-
-        $request = Request::createFromGlobals();
-        if (!$request->query->get("q")) {
-            $request->query->set("q", "/");
+        
+        $request = Router::$requestDriver;
+        if (!empty($request)) {
+            if (!$request->query->get("q")) {
+                $request->query->set("q", "/");
+            }
+        } else {
+            $_GET['q'] = "/";
         }
-
-        if ($this->method === "ALL" || $this->method === $request->server->get("REQUEST_METHOD")) {
+        
+        if ($this->method === "ALL" ||
+            ((!empty($request) && $this->method === $request->server->get("REQUEST_METHOD")) ||
+                $_SERVER['REQUEST_METHOD'] === $this->method)
+        ) {
             $this->useRoute($this->route);
         } else {
             $this->classRoute = false;
         }
-
+        
         return new RouteMiddleware($this->route, $this->classRoute, $this->methodRoute);
     }
-
+    
     /**
      * @param $route
      */
     protected function useRoute($route)
     {
-        $request = Request::createFromGlobals();
-        $this->method = $request->server->get("REQUEST_METHOD");
-        $get = $request->server->get("REQUEST_URI");
-
+        $request = Router::$requestDriver;
+        if (!empty($request)) {
+            $this->method = $request->server->get("REQUEST_METHOD");
+            $get = $request->server->get("REQUEST_URI");
+        } else {
+            $this->method = $_SERVER["REQUEST_METHOD"];
+            $get = $_SERVER["REQUEST_URI"];
+        }
         $check = explode("?", $get);
         if (isset($check[1])) {
             $get = $check[0];
         }
         $get = Helper::fixStandardRoute($get);
-
+        
         $setGet = array();
         $setGetRoutes = explode("/", $route);
         if (0 !== count($setGetRoutes)) {
             $getResut = explode("/", $get);
             $countGet = 0;
             foreach ($setGetRoutes as $rout) {
+                //print_r($rout);
                 $testRoute = explode("=>", $rout);
                 if (!empty($testRoute[1]) && isset($getResut[$countGet])) {
                     $setGet[$testRoute[1]] = $getResut[$countGet];
@@ -96,23 +106,26 @@ class AppRoute
             }
         }
         $routePreg = Helper::getMacrosMatch($route);
-
+        //print_r($setGet);
         if ((preg_match($routePreg, $get) && $route !== $get) || $route === $get) {
             $this->readyRout($setGet);
         } else {
             $this->classRoute = false;
         }
     }
-
+    
     /**
      * @param $setGet
      */
     protected function readyRout($setGet)
     {
-        $request = Request::createFromGlobals();
+        $request = Router::$requestDriver;
+        
         if (0 !== count($setGet)) {
-            foreach ($setGet as $keyGet => $valGet) {
-                $request->query->set($keyGet, $valGet);
+            if (!empty($request)) {
+                foreach ($setGet as $keyGet => $valGet) {
+                    $request->query->set($keyGet, $valGet);
+                }
             }
             $this->addGlobalRequest($setGet);
         }
@@ -122,7 +135,7 @@ class AppRoute
             $this->classRoute = $resultRoute[0];
         }
     }
-
+    
     /**
      * @param $setArray
      */

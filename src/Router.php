@@ -21,7 +21,8 @@ class Router
     public static $routeCounts = 0;
     public static $defaultRout = "";
     public static $defaultNameSpace = "";
-
+    public static $requestDriver;
+    
     /**
      * @param $rout
      *
@@ -30,10 +31,10 @@ class Router
     public static function rout($rout)
     {
         $rout = Helper::fixStandardRoute($rout);
-
+        
         return new AppRoute(self::$defaultRout . $rout);
     }
-
+    
     /**
      * @param       $name
      * @param array $groups
@@ -45,22 +46,22 @@ class Router
         if (0 !== count($filters)) {
             self::$middlewareFilters[$name] = $filters;
         }
-
+        
         if (!empty($rout)) {
             self::$defaultRout = $rout;
         } else {
             self::$defaultRout = "";
         }
-
+        
         if (!empty($nameSpace)) {
             self::$defaultNameSpace = $nameSpace;
         } else {
             self::$defaultNameSpace = "";
         }
-
+        
         RouteMiddleware::$middleware[$name] = $groups;
     }
-
+    
     /**
      * @param          $name
      * @param \Closure $function
@@ -83,7 +84,7 @@ class Router
 
             return $data;
         }
-
+        
         return false;
     }
 }
