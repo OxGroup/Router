@@ -18,12 +18,12 @@ use Whoops\Exception\ErrorException;
  */
 class GoRoute
 {
-
+    
     /**
      * @var array
      */
     public $response = array();
-
+    
     /**
      * GoRoute constructor.
      */
@@ -31,7 +31,7 @@ class GoRoute
     {
         $this->response = new Response();
     }
-
+    
     /**
      * @param        $route
      * @param        $class
@@ -57,7 +57,7 @@ class GoRoute
             }
         }
     }
-
+    
     /**
      * @param $class
      * @param $method
@@ -76,8 +76,12 @@ class GoRoute
             if (!empty($method)) {
                 $result = $this->tryRunMethod($controller, $method);
             } else {
-                $request = Request::createFromGlobals();
-                $result = $this->tryRunMethod($controller, strtolower($request->server->get("REQUEST_METHOD")));
+                $request = Router::$requestDriver;
+                if (!empty($request)) {
+                    $result = $this->tryRunMethod($controller, strtolower($request->server->get("REQUEST_METHOD")));
+                } else {
+                    $result = $this->tryRunMethod($controller, strtolower($_SERVER["REQUEST_METHOD"]));
+                }
             }
             $response = new Response(
                 $result,
@@ -88,7 +92,7 @@ class GoRoute
             $this->sandResponseCode(Response::HTTP_METHOD_NOT_ALLOWED);
         }
     }
-
+    
     /**
      * @param $controller
      * @param $method
@@ -114,7 +118,6 @@ class GoRoute
             $response->headers->set("Allow", $acceptMethods);
             $response->headers->set("access-control-allow-methods", $acceptMethods);
             $response->send();
-
         } else {
             try {
                 return $controller->$method();
@@ -123,7 +126,7 @@ class GoRoute
             }
         }
     }
-
+    
     /**
      * @param $response
      */
