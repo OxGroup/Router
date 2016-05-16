@@ -98,10 +98,29 @@ class GoRoute
      */
     protected function tryRunMethod($controller, $method)
     {
-        try {
-            return $controller->$method();
-        } catch (\RuntimeException $e) {
-            throw new \Exception($e);
+        if ($method === "options") {
+            $classMethods = get_class_methods($controller);
+            $classMethodsResult = ["options"];
+            foreach ($classMethods as $val) {
+                if (!in_array($val, array("__construct", "__distruct"))) {
+                    $classMethodsResult[] = $val;
+                }
+            }
+            $acceptMethods = strtoupper(implode(",", $classMethodsResult));
+            $response = new Response(
+                "",
+                Response::HTTP_OK
+            );
+            $response->headers->set("Allow", $acceptMethods);
+            $response->headers->set("access-control-allow-methods", $acceptMethods);
+            $response->send();
+
+        } else {
+            try {
+                return $controller->$method();
+            } catch (\RuntimeException $e) {
+                throw new \Exception($e);
+            }
         }
     }
 
