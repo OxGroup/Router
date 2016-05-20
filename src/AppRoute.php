@@ -37,7 +37,7 @@ class AppRoute
     public function method($method)
     {
         $this->method = $method;
-        
+
         return $this;
     }
     
@@ -77,13 +77,10 @@ class AppRoute
     protected function useRoute($route)
     {
         $request = Router::$requestDriver;
-        if (!empty($request)) {
-            $this->method = $request->server->get("REQUEST_METHOD");
-            $get = $request->server->get("REQUEST_URI");
-        } else {
-            $this->method = $_SERVER["REQUEST_METHOD"];
-            $get = $_SERVER["REQUEST_URI"];
-        }
+
+        $this->method = $request->server->get("REQUEST_METHOD");
+        $get = $request->server->get("REQUEST_URI");
+
         $check = explode("?", $get);
         if (isset($check[1])) {
             $get = $check[0];

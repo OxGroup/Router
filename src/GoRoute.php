@@ -111,10 +111,7 @@ class GoRoute
                 }
             }
             $acceptMethods = strtoupper(implode(",", $classMethodsResult));
-            $response = new Response(
-                "",
-                Response::HTTP_OK
-            );
+            $response = new Response("", Response::HTTP_OK);
             $response->headers->set("Allow", $acceptMethods);
             $response->headers->set("access-control-allow-methods", $acceptMethods);
             $response->send();
